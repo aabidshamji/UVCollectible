@@ -23,13 +23,13 @@ contract OctiToken is
     /**
     * @dev Contract constructor.
     * @param royaltyAddress Address to send contract-level royalties.
-    * @param _contractURI String representing RFC 3986 URI.
+    * @param _newContractURI String representing RFC 3986 URI.
     */
-    constructor(address royaltyAddress, string memory _contractURI) ERC721("Ultraviolet", "OCTI") {
+    constructor(address royaltyAddress, string memory _newContractURI) ERC721("Ultraviolet", "OCTI") {
         // Fees are in basis points (x/10000)
         require(royaltyAddress != address(0), "Royalties: new recipient is the zero address");
         updateDefaultRoyalty(royaltyAddress, 1000);
-        updateBaseURI(_contractURI);
+        updateBaseURI(_newContractURI);
     }
 
     string private baseURI = "https://testnets.ultraviolet.world/polygon/";
@@ -38,7 +38,7 @@ contract OctiToken is
     * @dev Get the current base URI.
     * @notice This is an internal function used to generate the URI for the token.
     */
-    function _baseURI() internal pure override returns (string memory) {
+    function _baseURI() internal view override returns (string memory) {
         return _contractURI;
     }
 
@@ -46,7 +46,7 @@ contract OctiToken is
     * @dev Changes the base URI 
     * @param _newContractURI String representing RFC 3986 URI.
     */
-    function updateBaseURI(string calldata _newContractURI) public onlyOwner {
+    function updateBaseURI(string memory _newContractURI) public onlyOwner {
         _contractURI = _newContractURI;
     }
 
@@ -70,8 +70,8 @@ contract OctiToken is
     // Minting
     /**
     * @dev Mints a new NFT.
-    * @param _to The address that will own the minted NFT.
-    * @param _tokenId of the NFT to be minted by the msg.sender.
+    * @param to The address that will own the minted NFT.
+    * @param tokenId of the NFT to be minted by the msg.sender.
     */
     function safeMint(address to, uint256 tokenId) public onlyOwner {
         _safeMint(to, tokenId);
@@ -80,11 +80,13 @@ contract OctiToken is
     /**
     * @dev Mints a new NFT.
     * @notice Used to mint a token and set token-level royalties in one contract call 
-    * @param _to The address that will own the minted NFT.
-    * @param _tokenId of the NFT to be minted by the msg.sender.
+    * @param to The address that will own the minted NFT.
+    * @param tokenId of the NFT to be minted by the msg.sender.
+    * @param receiver Address to receive the royalties. Cannot be the zero address.
+    * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
     */
-    function mintNFTWithRoyalty(address recipient, uint256 tokenId, address receiver, uint96 feeNumerator) public onlyOwner {
-        _mint(recipient, tokenId);
+    function mintNFTWithRoyalty(address to, uint256 tokenId, address receiver, uint96 feeNumerator) public onlyOwner {
+        safeMint(to, tokenId);
         updateTokenRoyalty(tokenId, receiver, feeNumerator);
     }
 
@@ -129,7 +131,7 @@ contract OctiToken is
     * @dev Removes default royalty information.
     */
     function removeDefaultRoyalty() public onlyOwner {
-        _deleteDefaultRoyalty(tokenId);
+        _deleteDefaultRoyalty();
     }
 
     // The following functions are overrides required by Solidity.
@@ -137,7 +139,7 @@ contract OctiToken is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(ERC721, ERC721Enumerable)
+        override(ERC721, ERC721Enumerable, ERC2981)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -151,7 +153,11 @@ contract OctiToken is
     function isApprovedForAll(
         address _owner,
         address _operator
-    ) public override view returns (bool isOperator) {
+    ) 
+        public 
+        override(ERC721, IERC721) 
+        view 
+        returns (bool isOperator) {
       // if OpenSea's ERC721 Proxy Address is detected, auto-return true
       // for Polygon's Mumbai testnet, use 0xff7Ca10aF37178BdD056628eF42fD7F799fAc77c
       // for Polygon's mainnet, use 0x58807baD0B376efc12F5AD86aAc70E78ed67deaE
