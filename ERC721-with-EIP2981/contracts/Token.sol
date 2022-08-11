@@ -22,12 +22,17 @@ contract OctiToken is
     
     /**
     * @dev Contract constructor.
+    * @param newOwner Fireblocks account address (to be set as owner).
     * @param royaltyAddress Address to send contract-level royalties.
     * @param _newContractURI String representing RFC 3986 URI.
     */
-    constructor(address royaltyAddress, string memory _newContractURI) ERC721("Ultraviolet", "OCTI") {
+    constructor(
+        address newOwner, 
+        address royaltyAddress, 
+        string memory _newContractURI
+    ) ERC721("Ultraviolet", "OCTI") {
+        transferOwnership(newOwner);
         // Fees are in basis points (x/10000)
-        require(royaltyAddress != address(0), "Royalties: new recipient is the zero address");
         updateDefaultRoyalty(royaltyAddress, 1000);
         updateBaseURI(_newContractURI);
     }
@@ -85,7 +90,12 @@ contract OctiToken is
     * @param receiver Address to receive the royalties. Cannot be the zero address.
     * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
     */
-    function mintNFTWithRoyalty(address to, uint256 tokenId, address receiver, uint96 feeNumerator) public onlyOwner {
+    function mintNFTWithRoyalty(
+        address to, 
+        uint256 tokenId, 
+        address receiver, 
+        uint96 feeNumerator
+    ) public onlyOwner {
         safeMint(to, tokenId);
         updateTokenRoyalty(tokenId, receiver, feeNumerator);
     }
@@ -132,6 +142,14 @@ contract OctiToken is
     */
     function removeDefaultRoyalty() public onlyOwner {
         _deleteDefaultRoyalty();
+    }
+
+    /**
+     * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
+     */
+    function _burn(uint256 tokenId) internal virtual override {
+        super._burn(tokenId);
+        _resetTokenRoyalty(tokenId);
     }
 
     // The following functions are overrides required by Solidity.
