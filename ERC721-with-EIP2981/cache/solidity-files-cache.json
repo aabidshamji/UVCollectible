@@ -2,14 +2,14 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/aabid-octi/Documents/contracts/ERC721-with-EIP2981/contracts/Token.sol": {
-      "lastModificationDate": 1660089458752,
-      "contentHash": "ebca086614367ec05cd107e1e36d8981",
+      "lastModificationDate": 1660261973988,
+      "contentHash": "1f03227e181e680fc33a267f369e7d1b",
       "sourceName": "contracts/Token.sol",
       "solcConfig": {
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -51,7 +51,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -88,7 +88,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -125,7 +125,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -168,7 +168,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -206,7 +206,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -244,7 +244,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -282,7 +282,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -317,7 +317,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -354,7 +354,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -389,7 +389,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -426,7 +426,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -461,7 +461,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -496,7 +496,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -533,7 +533,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -568,7 +568,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
@@ -605,7 +605,7 @@
         "version": "0.8.12",
         "settings": {
           "optimizer": {
-            "enabled": false,
+            "enabled": true,
             "runs": 200
           },
           "outputSelection": {
