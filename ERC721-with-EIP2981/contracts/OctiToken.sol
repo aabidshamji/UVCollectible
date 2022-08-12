@@ -90,7 +90,7 @@ contract OctiToken is
     * @param receiver Address to receive the royalties. Cannot be the zero address.
     * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
     */
-    function mintNFTWithRoyalty(
+    function safeMintWithRoyalty(
         address to, 
         uint256 tokenId, 
         address receiver, 
