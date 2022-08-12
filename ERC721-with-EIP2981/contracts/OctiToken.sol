@@ -31,10 +31,10 @@ contract OctiToken is
         address royaltyAddress, 
         string memory _newContractURI
     ) ERC721("Ultraviolet", "OCTI") {
-        transferOwnership(newOwner);
         // Fees are in basis points (x/10000)
         updateDefaultRoyalty(royaltyAddress, 1000);
         updateBaseURI(_newContractURI);
+        transferOwnership(newOwner);
     }
 
     string private baseURI = "https://testnets.ultraviolet.world/polygon/";

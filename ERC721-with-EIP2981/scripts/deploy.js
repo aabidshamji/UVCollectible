@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 
 async function main() {
-    const NFT = await hre.ethers.getContractFactory("Token");
+    const NFT = await hre.ethers.getContractFactory("OctiToken");
     const nft = await NFT.deploy(
         "0x9367Ee417ae552cb94f3249d0424000747877AA8",
         "0xdF81E19912896af20fF1be1c1Bb4487f6Ff423E0",
