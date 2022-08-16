@@ -35,9 +35,12 @@ class ABIFormatter:
     def print_functions(self):
         for function in self.abi:
             if 'name' in function.keys():
+                function_type = function['type']
+                if function_type == 'function':
+                    function_type += ', ' + function['stateMutability']
                 print(
                     function['name'], 
-                    f"({function['type']}):", 
+                    f"({function_type}):", 
                     self.get_input_string(function),
                     self.get_output_string(function)
                 )
