@@ -93,11 +93,11 @@ contract OctiToken is
     function safeMintWithRoyalty(
         address to, 
         uint256 tokenId, 
-        address receiver, 
+        address feeReceiver, 
         uint96 feeNumerator
     ) public onlyOwner {
         safeMint(to, tokenId);
-        updateTokenRoyalty(tokenId, receiver, feeNumerator);
+        updateTokenRoyalty(tokenId, feeReceiver, feeNumerator);
     }
 
     /**
@@ -162,28 +162,5 @@ contract OctiToken is
     {
         return super.supportsInterface(interfaceId);
     }
-
-    /**
-    * @dev Override isApprovedForAll to auto-approve OpenSea's proxy contract
-    * @notice Typically, you (a seller) would have to call your smart contract's setApprovalForAll() 
-    * method with OpenSea's address to approve it as an operator, which would cost you gas.
-    */
-    function isApprovedForAll(
-        address _owner,
-        address _operator
-    ) 
-        public 
-        override(ERC721, IERC721) 
-        view 
-        returns (bool isOperator) {
-      // if OpenSea's ERC721 Proxy Address is detected, auto-return true
-      // for Polygon's Mumbai testnet, use 0xff7Ca10aF37178BdD056628eF42fD7F799fAc77c
-      // for Polygon's mainnet, use 0x58807baD0B376efc12F5AD86aAc70E78ed67deaE
-        if (_operator == address(0xff7Ca10aF37178BdD056628eF42fD7F799fAc77c)) {
-            return true;
-        }
-        
-        // otherwise, use the default ERC721.isApprovedForAll()
-        return ERC721.isApprovedForAll(_owner, _operator);
-    }
+    
 }
