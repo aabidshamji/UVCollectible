@@ -18,7 +18,7 @@ contract OctiToken is
     ERC721Burnable 
 {
 
-    string private _contractURI;
+    string public contractURI;
     
     /**
     * @dev Contract constructor.
@@ -33,26 +33,24 @@ contract OctiToken is
     ) ERC721("Ultraviolet", "OCTI") {
         // Fees are in basis points (x/10000)
         updateDefaultRoyalty(royaltyAddress, 1000);
-        updateBaseURI(_newContractURI);
+        updateContractURI(_newContractURI);
         transferOwnership(newOwner);
     }
-
-    string private baseURI = "https://testnets.ultraviolet.world/polygon/";
 
     /**
     * @dev Get the current base URI.
     * @notice This is an internal function used to generate the URI for the token.
     */
     function _baseURI() internal view override returns (string memory) {
-        return _contractURI;
+        return contractURI;
     }
 
     /**
     * @dev Changes the base URI 
     * @param _newContractURI String representing RFC 3986 URI.
     */
-    function updateBaseURI(string memory _newContractURI) public onlyOwner {
-        _contractURI = _newContractURI;
+    function updateContractURI(string memory _newContractURI) public onlyOwner {
+        contractURI = _newContractURI;
     }
 
     // Pause
@@ -87,7 +85,7 @@ contract OctiToken is
     * @notice Used to mint a token and set token-level royalties in one contract call 
     * @param to The address that will own the minted NFT.
     * @param tokenId of the NFT to be minted by the msg.sender.
-    * @param receiver Address to receive the royalties. Cannot be the zero address.
+    * @param feeReceiver Address to receive the royalties. Cannot be the zero address.
     * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
     */
     function safeMintWithRoyalty(

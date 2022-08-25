@@ -1,6 +1,48 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
+    "/Users/aabid-octi/Documents/contracts/ERC721-with-EIP2981/contracts/OctiToken.sol": {
+      "lastModificationDate": 1661453436085,
+      "contentHash": "69f09e5df132384b790d88e34d731683",
+      "sourceName": "contracts/OctiToken.sol",
+      "solcConfig": {
+        "version": "0.8.12",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/access/Ownable.sol",
+        "@openzeppelin/contracts/security/Pausable.sol",
+        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
+        "@openzeppelin/contracts/token/common/ERC2981.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
+        "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.12"
+      ],
+      "artifacts": [
+        "OctiToken"
+      ]
+    },
     "/Users/aabid-octi/Documents/contracts/ERC721-with-EIP2981/node_modules/@openzeppelin/contracts/access/Ownable.sol": {
       "lastModificationDate": 1660088108957,
       "contentHash": "e436cea06129be2c73cda4b1acc848b5",
@@ -590,48 +632,6 @@
       ],
       "artifacts": [
         "IERC721Enumerable"
-      ]
-    },
-    "/Users/aabid-octi/Documents/contracts/ERC721-with-EIP2981/contracts/OctiToken.sol": {
-      "lastModificationDate": 1660264956008,
-      "contentHash": "3c14960fed445025a9facd34fc28ad06",
-      "sourceName": "contracts/OctiToken.sol",
-      "solcConfig": {
-        "version": "0.8.12",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [
-        "@openzeppelin/contracts/access/Ownable.sol",
-        "@openzeppelin/contracts/security/Pausable.sol",
-        "@openzeppelin/contracts/token/ERC721/ERC721.sol",
-        "@openzeppelin/contracts/token/common/ERC2981.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol",
-        "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol"
-      ],
-      "versionPragmas": [
-        "^0.8.12"
-      ],
-      "artifacts": [
-        "OctiToken"
       ]
     }
   }
