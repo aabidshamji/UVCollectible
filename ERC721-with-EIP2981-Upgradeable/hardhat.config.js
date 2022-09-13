@@ -11,11 +11,11 @@ module.exports = {
     hardhat: {
     },
     mumbai: {
-      url: "https://polygon-mumbai.g.alchemy.com/v2/1lSStfXOLEyEyFq2jfdgJByjUE4nUD0K",
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY]
     },
     matic: {
-      url: "https://rpc-mainnet.maticvigil.com",
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY]
     }
   },
