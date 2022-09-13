@@ -23,3 +23,4 @@ main().then(() => process.exit(0)).catch(error => {
 });
 
 // npx hardhat run scripts/deploy.js --network mumbai
+// solc --standard-json  -o ./ OctiToken.sol

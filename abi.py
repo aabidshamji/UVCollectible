@@ -3,6 +3,7 @@ import json
 class ABIFormatter:
 
     def __init__(self, abi_path):
+
         f = open(abi_path)
         token = json.load(f)
         self.token = token
