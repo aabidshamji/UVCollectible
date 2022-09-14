@@ -1373,10 +1373,10 @@
           "flat": false
         }
       },
-      "OctiToken1155": {
-        "src": "contracts/OctiToken1155.sol:14",
+      "OctiToken1155Upgradeable": {
+        "src": "contracts/OctiToken1155Upgradeable.sol:14",
         "version": {
-          "withMetadata": "7a7b424d3273689d4cd423d46f1f3cdc295bbdd12bd6247d334aed1e1774b55d",
+          "withMetadata": "4716fddd1361accf2c5b940091a0ac76acf916d1e988971af7d4b2fe5e5ab44f",
           "withoutMetadata": "3dd6c4eaf9566c8eb2b4d18ae735ff03a1a5ad5d8d1d7e9d6294cdfc1b592bd6",
           "linkedWithoutMetadata": "3dd6c4eaf9566c8eb2b4d18ae735ff03a1a5ad5d8d1d7e9d6294cdfc1b592bd6"
         },
