@@ -20,14 +20,24 @@ contract OctiToken1155Upgradeable is
     ERC1155PausableUpgradeable, 
     ERC1155BurnableUpgradeable,
     UUPSUpgradeable 
-{    
+{   
+    
+    string public name;
+    string public symbol;
+    string private _contractURI;
+
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
     }
 
     function initialize() initializer public {
-        __ERC1155_init("google.com");
+
+        name = "Ultraviolet";
+        symbol = "UV";
+        _contractURI = "https://imx-metadata-test.herokuapp.com/polygon/";
+
+        __ERC1155_init("https://imx-metadata-test.herokuapp.com/polygon/{id}");
         __Ownable_init();
         __Pausable_init();
         __ERC1155Burnable_init();
@@ -42,6 +52,21 @@ contract OctiToken1155Upgradeable is
     */
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
+    }
+
+    /**
+    * @dev Changes the contract URI 
+    * @param newuri String representing RFC 3986 URI.
+    */
+    function setContractURI(string memory newuri) public onlyOwner {
+        _contractURI = newuri;
+    }
+
+    /**
+    * @dev Contract-level metadata for OpenSea
+    */
+    function contractURI() public view returns (string memory) {
+        return _contractURI;
     }
 
     // Pause

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/aabid-octi/Documents/contracts/ERC1155-with-EIP298-Upgradeable/contracts/OctiToken1155Upgradeable.sol": {
-      "lastModificationDate": 1663119019800,
-      "contentHash": "a99a0c1a5ceb39d1bc64ee59689891c1",
+      "lastModificationDate": 1663193523600,
+      "contentHash": "bb99a2b1b9274db50a9993d744b8e974",
       "sourceName": "contracts/OctiToken1155Upgradeable.sol",
       "solcConfig": {
         "version": "0.8.12",
