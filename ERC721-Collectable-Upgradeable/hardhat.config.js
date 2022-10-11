@@ -1,7 +1,9 @@
 require('dotenv').config();
+require('hardhat-docgen');
 require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 require("@nomicfoundation/hardhat-toolbox");
+require("@openzeppelin/hardhat-upgrades");
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
@@ -10,11 +12,11 @@ module.exports = {
     hardhat: {
     },
     mumbai: {
-      url: "https://rpc-mumbai.maticvigil.com",
+      url: `https://polygon-mumbai.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY]
     },
     matic: {
-      url: "https://rpc-mainnet.maticvigil.com",
+      url: `https://polygon-mainnet.g.alchemy.com/v2/${process.env.ALCHEMY_API_KEY}`,
       accounts: [process.env.PRIVATE_KEY]
     }
   },
