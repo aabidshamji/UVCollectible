@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/aabid-octi/Documents/contracts/ERC721-Collectable-Upgradeable/contracts/OctiTokenCollectable.sol": {
-      "lastModificationDate": 1665515862405,
-      "contentHash": "15e9f2ed5d281dcfadf60da1ef79faee",
+      "lastModificationDate": 1665520296205,
+      "contentHash": "8e4223f9d8a7fccd9e01613a30420e58",
       "sourceName": "contracts/OctiTokenCollectable.sol",
       "solcConfig": {
         "version": "0.8.12",
