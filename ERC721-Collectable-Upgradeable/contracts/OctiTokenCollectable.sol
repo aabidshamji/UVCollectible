@@ -10,8 +10,9 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-/// @custom:security-contact security@octi.com
+/// @custom:security-contact security@ultraviolet.club
 contract OctiTokenCollectable is
     Initializable,
     ERC721Upgradeable,
@@ -25,10 +26,10 @@ contract OctiTokenCollectable is
     /**
      * @dev Emmited when token is created
      */
-    event EventToken(uint256 indexed eventId, uint256 tokenId, address owner);
+    event Minted(uint256 indexed eventId, uint256 tokenId, address owner);
 
     // Stores the base contractURI
-    string public _contractURI;
+    string public contractURI;
 
     // Last Used id (used to generate new ids)
     uint256 public lastId;
@@ -54,7 +55,7 @@ contract OctiTokenCollectable is
         public
         initializer
     {
-        __ERC721_init("Ultraviolet", "OCTI");
+        __ERC721_init("Ultraviolet Collectable", "ULTRAC");
         __ERC721Enumerable_init();
         __Pausable_init();
         __Ownable_init();
@@ -84,15 +85,16 @@ contract OctiTokenCollectable is
         override
         returns (string memory)
     {
-        _requireMinted(tokenId);
         uint256 eventId = _tokenEvent[tokenId];
+
         return
-            _strConcat(
-                _contractURI,
-                _uint2str(eventId),
-                "/",
-                _uint2str(tokenId),
-                ""
+            string(
+                abi.encodePacked(
+                    contractURI,
+                    StringsUpgradeable.toString(eventId),
+                    "/",
+                    StringsUpgradeable.toString(tokenId)
+                )
             );
     }
 
@@ -107,7 +109,13 @@ contract OctiTokenCollectable is
         virtual
         returns (string memory)
     {
-        return _strConcat(_contractURI, _uint2str(eventId), "", "", "");
+        return
+            string(
+                abi.encodePacked(
+                    contractURI,
+                    StringsUpgradeable.toString(eventId)
+                )
+            );
     }
 
     /**
@@ -115,7 +123,7 @@ contract OctiTokenCollectable is
      * @param __contractURI String representing RFC 3986 URI.
      */
     function updateContractURI(string memory __contractURI) public onlyOwner {
-        _contractURI = __contractURI;
+        contractURI = __contractURI;
     }
 
     /**
@@ -257,7 +265,7 @@ contract OctiTokenCollectable is
     ) internal returns (bool) {
         _safeMint(to, tokenId);
         _tokenEvent[tokenId] = eventId;
-        emit EventToken(eventId, tokenId, to);
+        emit Minted(eventId, tokenId, to);
         return true;
     }
 
@@ -336,8 +344,8 @@ contract OctiTokenCollectable is
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function removeEventRoyalty(uint256 tokenId) public onlyOwner {
-        _resetEventRoyalty(tokenId);
+    function removeEventRoyalty(uint256 eventId) public onlyOwner {
+        _resetEventRoyalty(eventId);
     }
 
     /**
@@ -402,8 +410,8 @@ contract OctiTokenCollectable is
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function _resetEventRoyalty(uint256 tokenId) internal virtual {
-        delete _eventRoyaltyInfo[tokenId];
+    function _resetEventRoyalty(uint256 eventId) internal virtual {
+        delete _eventRoyaltyInfo[eventId];
     }
 
     /**
@@ -427,73 +435,5 @@ contract OctiTokenCollectable is
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
-    }
-
-    // Helper Functions
-    /**
-     * @dev Function to convert uint to string
-     * Taken from https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol
-     */
-    function _uint2str(uint256 _i)
-        internal
-        pure
-        returns (string memory _uintAsString)
-    {
-        if (_i == 0) {
-            return "0";
-        }
-        uint256 j = _i;
-        uint256 len;
-        while (j != 0) {
-            len++;
-            j /= 10;
-        }
-        bytes memory bstr = new bytes(len);
-        uint256 k = len - 1;
-        while (_i != 0) {
-            bstr[k--] = bytes1(uint8(48 + (_i % 10)));
-            _i /= 10;
-        }
-        return string(bstr);
-    }
-
-    /**
-     * @dev Function to concat strings
-     * Taken from https://github.com/oraclize/ethereum-api/blob/master/oraclizeAPI_0.5.sol
-     */
-    function _strConcat(
-        string memory _a,
-        string memory _b,
-        string memory _c,
-        string memory _d,
-        string memory _e
-    ) internal pure returns (string memory _concatenatedString) {
-        bytes memory _ba = bytes(_a);
-        bytes memory _bb = bytes(_b);
-        bytes memory _bc = bytes(_c);
-        bytes memory _bd = bytes(_d);
-        bytes memory _be = bytes(_e);
-        string memory abcde = new string(
-            _ba.length + _bb.length + _bc.length + _bd.length + _be.length
-        );
-        bytes memory babcde = bytes(abcde);
-        uint256 k = 0;
-        uint256 i = 0;
-        for (i = 0; i < _ba.length; i++) {
-            babcde[k++] = _ba[i];
-        }
-        for (i = 0; i < _bb.length; i++) {
-            babcde[k++] = _bb[i];
-        }
-        for (i = 0; i < _bc.length; i++) {
-            babcde[k++] = _bc[i];
-        }
-        for (i = 0; i < _bd.length; i++) {
-            babcde[k++] = _bd[i];
-        }
-        for (i = 0; i < _be.length; i++) {
-            babcde[k++] = _be[i];
-        }
-        return string(babcde);
     }
 }

@@ -5,7 +5,7 @@ async function main() {
 
     const contract = await upgrades.deployProxy(factory, [
         "0xdF81E19912896af20fF1be1c1Bb4487f6Ff423E0",
-        "https://testnets.ultraviolet.world/metadata/polygon/"
+        "https://experimental-api-4b0e39ac2e3f.herokuapp.com/token/mumbai"
     ], {
         kind: 'uups',
         initializer: "initialize"

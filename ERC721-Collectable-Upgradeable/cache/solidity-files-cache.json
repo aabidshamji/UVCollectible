@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/aabid-octi/Documents/contracts/ERC721-Collectable-Upgradeable/contracts/OctiTokenCollectable.sol": {
-      "lastModificationDate": 1665520296205,
-      "contentHash": "8e4223f9d8a7fccd9e01613a30420e58",
+      "lastModificationDate": 1665616877506,
+      "contentHash": "ded5cf54c902ff8ecaf2259a3a1344bc",
       "sourceName": "contracts/OctiTokenCollectable.sol",
       "solcConfig": {
         "version": "0.8.12",
@@ -39,7 +39,8 @@
         "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol",
         "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol",
         "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol",
-        "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol"
+        "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol",
+        "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol"
       ],
       "versionPragmas": [
         "^0.8.12"
