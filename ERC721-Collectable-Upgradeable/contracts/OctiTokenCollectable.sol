@@ -28,6 +28,16 @@ contract OctiTokenCollectable is
      */
     event Minted(uint256 indexed eventId, uint256 tokenId, address owner);
 
+    /**
+     * @dev Emmited when token is frozen
+     */
+    event Frozen(uint256 tokenId);
+
+    /**
+     * @dev Emmited when token is unfrozen by function call
+     */
+    event Unfrozen(uint256 tokenId);
+
     // Stores the base contractURI
     string public contractURI;
 
@@ -36,6 +46,9 @@ contract OctiTokenCollectable is
 
     // Event Id for each token
     mapping(uint256 => uint256) private _tokenEvent;
+
+    // Frozen tokens
+    mapping(uint256 => bool) private _tokenFrozen;
 
     // ERC2981 Royalty Info
     struct RoyaltyInfo {
@@ -182,6 +195,101 @@ contract OctiTokenCollectable is
         _unpause();
     }
 
+    // Freezing
+    /**
+     * @dev Gets the token freeze status
+     * @param tokenId ( uint256 ) The token id to check.
+     * @return bool representing the token freeze status
+     */
+    function isFrozen(uint256 tokenId) public view returns (bool) {
+        return _tokenFrozen[tokenId];
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the toke is not frozen.
+     * @param tokenId ( uint256 ) The token id to check.
+     */
+    modifier whenNotFrozen(uint256 tokenId) {
+        require(!this.isFrozen(tokenId), "Token is frozen");
+        _;
+    }
+
+    /**
+     * @dev Modifier to make a function callable only when the token is frozen.
+     * @param tokenId ( uint256 ) The token id to check.
+     */
+    modifier whenFrozen(uint256 tokenId) {
+        require(this.isFrozen(tokenId), "Token is not frozen");
+        _;
+    }
+
+    /**
+     * @dev Freeze a specific ERC721 token.
+     * Requires
+     * - The msg sender to be the owner
+     * - The contract does not have to be paused
+     * - The token does not have to be frozen
+     * @param tokenId ( uint256 ) Id of the ERC721 token to be frozen.
+     */
+    function freeze(uint256 tokenId)
+        public
+        onlyOwner
+        whenNotPaused
+        whenNotFrozen(tokenId)
+    {
+        _freeze(tokenId);
+    }
+
+    /**
+     * @dev Unfreeze a specific ERC721 token.
+     * Requires
+     * - The msg sender to be the owner
+     * - The contract does not have to be paused
+     * - The token must be frozen
+     * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
+     */
+    function unfreeze(uint256 tokenId)
+        public
+        onlyOwner
+        whenNotPaused
+        whenFrozen(tokenId)
+    {
+        _unfreeze(tokenId);
+    }
+
+    /**
+     * @dev Internal function to freeze a specific token
+     * @param tokenId ( uint256 ) Id of the token being frozen by the _msgSender
+     */
+    function _freeze(uint256 tokenId) internal {
+        _tokenFrozen[tokenId] = true;
+        emit Frozen(tokenId);
+    }
+
+    /**
+     * @dev Internal function to freeze a specific token
+     * @param tokenId ( uint256 ) Id of the token being frozen by the _msgSender
+     */
+    function _unfreeze(uint256 tokenId) internal {
+        delete _tokenFrozen[tokenId];
+        emit Unfrozen(tokenId);
+    }
+
+    // Reclaim Tokens
+    /**
+     * @dev Reclaim a token from a user to the owner's wallet
+     * Requires:
+     *  - msg sender to be the contract owner
+     * @param tokenId ( uint256 ) Id of the token being reclaimed
+     */
+    function reclaimToken(uint256 tokenId) public onlyOwner {
+        require(!_exists(tokenId), "ERC721: token does not exist");
+        _transfer(ownerOf(tokenId), owner(), tokenId);
+        if (isFrozen(tokenId)) {
+            _unfreeze(tokenId);
+        }
+    }
+
     // Minting
     /**
      * @dev Mint token to address.
@@ -280,6 +388,7 @@ contract OctiTokenCollectable is
         internal
         override(ERC721Upgradeable, ERC721EnumerableUpgradeable)
         whenNotPaused
+        whenNotFrozen(tokenId)
     {
         super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -420,6 +529,7 @@ contract OctiTokenCollectable is
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
         delete _tokenEvent[tokenId];
+        delete _tokenFrozen[tokenId];
     }
 
     // The following functions are overrides required by Solidity.
