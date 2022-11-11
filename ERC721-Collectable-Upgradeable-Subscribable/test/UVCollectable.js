@@ -7,8 +7,8 @@ describe('UVCollectable', function () {
         this.factory = await ethers.getContractFactory('UVCollectable');
         // deploy the contract
         this.nonFunToken = await upgrades.deployProxy(this.factory, [
-            "0xdF81E19912896af20fF1be1c1Bb4487f6Ff423E0",
-            "https://experimental-api-4b0e39ac2e3f.herokuapp.com/token/mumbai"
+            "CRT1",
+            "Creator 1 x Ultraviolet"
         ], {
             kind: 'uups',
             initializer: "initialize"

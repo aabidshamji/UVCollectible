@@ -11,7 +11,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Enumer
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
-import "@opengsn/contracts/src/ERC2771Recipient";
+import "@opengsn/contracts/src/ERC2771Recipient.sol";
 import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
@@ -101,6 +101,27 @@ contract UVCollectable is
         address uvAdmin = 0x9367Ee417ae552cb94f3249d0424000747877AA8;
         _admins[uvAdmin] = true;
         emit AdminUpdated(uvAdmin, true);
+    }
+
+    /************************************************************************************************
+     * Metatranscations
+     ************************************************************************************************/
+    function _msgSender()
+        internal
+        view
+        override(ContextUpgradeable, ERC2771Recipient)
+        returns (address)
+    {
+        return ERC2771Recipient._msgSender();
+    }
+
+    function _msgData()
+        internal
+        view
+        override(ContextUpgradeable, ERC2771Recipient)
+        returns (bytes memory)
+    {
+        return ERC2771Recipient._msgData();
     }
 
     /************************************************************************************************
@@ -428,7 +449,6 @@ contract UVCollectable is
      * @dev See {IERC5643-isRenewable}.
      */
     function isRenewable(uint256 tokenId) external pure returns (bool) {
-        _requireMinted(tokenId);
         return true;
     }
 
