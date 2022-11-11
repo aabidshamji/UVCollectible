@@ -30,10 +30,6 @@ contract UVCollectable is
     /************************************************************************************************
      * Events
      ************************************************************************************************/
-    /**
-     * @dev Emmited when token is created
-     */
-    event Minted(uint256 indexed eventId, uint256 tokenId, address owner);
 
     /**
      * @dev Emmited when token is frozen
@@ -564,7 +560,6 @@ contract UVCollectable is
     ) internal returns (bool) {
         _safeMint(to, tokenId);
         _tokenEvent[tokenId] = eventId;
-        emit Minted(eventId, tokenId, to);
         if (frozen) {
             freeze(tokenId);
         }
