@@ -136,10 +136,10 @@ contract UVCollectable is
 
     /**
      * @dev Returns the true if the address is an admin user, else false.
-     * @param admin ( address )
+     * @param user ( address )
      */
-    function isAdmin(address admin) public view returns (bool) {
-        return _admins[admin];
+    function isAdmin(address user) public view returns (bool) {
+        return _admins[user];
     }
 
     /**
@@ -731,6 +731,32 @@ contract UVCollectable is
     }
 
     /************************************************************************************************
+     * Seaport
+     ************************************************************************************************/
+    /**
+     * Override isApprovedForAll to auto-approve OS's proxy contract
+     * See: https://github.com/ProjectOpenSea/seaport
+     */
+    function isApprovedForAll(address _owner, address _operator)
+        public
+        view
+        override(ERC721Upgradeable, IERC721Upgradeable)
+        returns (bool isOperator)
+    {
+        // if Seaport Proxy Address is detected, auto-return true
+        // if the operator is an admin user, auto-return true
+        if (
+            _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
+            isAdmin(_operator)
+        ) {
+            return true;
+        }
+
+        // otherwise, use the default ERC721.isApprovedForAll()
+        return super.isApprovedForAll(_owner, _operator);
+    }
+
+    /************************************************************************************************
      * Admin
      ************************************************************************************************/
     // The following functions are overrides required by Solidity.
@@ -756,27 +782,5 @@ contract UVCollectable is
      */
     function setTurstedForwarder(address forwarder) public onlyOwnerOrAdmin {
         _setTrustedForwarder(forwarder);
-    }
-
-    /************************************************************************************************
-     * Seaport
-     ************************************************************************************************/
-    /**
-     * Override isApprovedForAll to auto-approve OS's proxy contract
-     * See: https://github.com/ProjectOpenSea/seaport
-     */
-    function isApprovedForAll(address _owner, address _operator)
-        public
-        view
-        override(ERC721Upgradeable, IERC721Upgradeable)
-        returns (bool isOperator)
-    {
-        // if Seaport Proxy Address is detected, auto-return true
-        if (_operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581)) {
-            return true;
-        }
-
-        // otherwise, use the default ERC721.isApprovedForAll()
-        return super.isApprovedForAll(_owner, _operator);
     }
 }
