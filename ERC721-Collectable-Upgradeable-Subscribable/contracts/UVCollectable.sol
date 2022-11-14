@@ -444,7 +444,9 @@ contract UVCollectable is
     /**
      * @dev See {IERC5643-isRenewable}.
      */
-    function isRenewable(uint256 tokenId) external pure returns (bool) {
+    function isRenewable(
+        uint256 /*tokenId*/
+    ) external pure returns (bool) {
         return true;
     }
 
@@ -753,7 +755,7 @@ contract UVCollectable is
         }
 
         // otherwise, use the default ERC721.isApprovedForAll()
-        return super.isApprovedForAll(_owner, _operator);
+        return ERC721Upgradeable.isApprovedForAll(_owner, _operator);
     }
 
     /************************************************************************************************
