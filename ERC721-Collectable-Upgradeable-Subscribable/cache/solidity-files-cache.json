@@ -40,8 +40,8 @@
       ]
     },
     "/Users/aabid-octi/Documents/contracts/ERC721-Collectable-Upgradeable-Subscribable/contracts/UVCollectable.sol": {
-      "lastModificationDate": 1668452099684,
-      "contentHash": "fa9da34cee1905a094ec5490333f4148",
+      "lastModificationDate": 1669057154111,
+      "contentHash": "5a71fad50bca94a37065dfffc5482d7e",
       "sourceName": "contracts/UVCollectable.sol",
       "solcConfig": {
         "version": "0.8.12",

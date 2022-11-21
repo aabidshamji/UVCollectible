@@ -42,7 +42,7 @@ contract UVCollectable is
     event Unfrozen(uint256 tokenId);
 
     /**
-     * @dev Emmited when an admin is added
+     * @dev Emmited when an admin is added or removed
      */
     event AdminUpdated(address admin, bool added);
 
@@ -55,8 +55,8 @@ contract UVCollectable is
     // Last Used id (used to generate new ids)
     uint256 public lastId;
 
-    // Event Id for each token
-    mapping(uint256 => uint256) private _tokenEvent;
+    // Collection Id for each token
+    mapping(uint256 => uint256) private _tokenCollection;
 
     // Frozen tokens
     mapping(uint256 => bool) private _tokenFrozen;
@@ -67,7 +67,7 @@ contract UVCollectable is
         uint96 royaltyFraction;
     }
     RoyaltyInfo private _defaultRoyaltyInfo;
-    mapping(uint256 => RoyaltyInfo) private _eventRoyaltyInfo;
+    mapping(uint256 => RoyaltyInfo) private _collectionRoyaltyInfo;
 
     // Subscription Info
     mapping(uint256 => uint64) private _expirations;
@@ -186,13 +186,13 @@ contract UVCollectable is
         override
         returns (string memory)
     {
-        uint256 eventId = _tokenEvent[tokenId];
+        uint256 collectionId = _tokenCollection[tokenId];
 
         return
             string(
                 abi.encodePacked(
                     contractURI,
-                    StringsUpgradeable.toString(eventId),
+                    StringsUpgradeable.toString(collectionId),
                     "/",
                     StringsUpgradeable.toString(tokenId)
                 )
@@ -201,10 +201,10 @@ contract UVCollectable is
 
     /**
      * @dev Gets URI for the token metadata
-     * @param eventId ( uint256 ) The Event Id you want to get the URI
-     * @return ( string ) URI for the event metadata
+     * @param collectionId ( uint256 ) The collection id you want to get the URI
+     * @return ( string ) URI for the collection metadata
      */
-    function eventURI(uint256 eventId)
+    function collectionURI(uint256 collectionId)
         public
         view
         virtual
@@ -214,7 +214,7 @@ contract UVCollectable is
             string(
                 abi.encodePacked(
                     contractURI,
-                    StringsUpgradeable.toString(eventId)
+                    StringsUpgradeable.toString(collectionId)
                 )
             );
     }
@@ -251,29 +251,29 @@ contract UVCollectable is
      * Enumerable
      ************************************************************************************************/
     /**
-     * @dev Gets the Event Id for the token
+     * @dev Gets the collection Id for the token
      * @param tokenId ( uint256 ) The Token Id you want to query
-     * @return ( uint256 ) representing the Event id for the token
+     * @return ( uint256 ) representing the collection id for the token
      */
-    function tokenEvent(uint256 tokenId) public view returns (uint256) {
+    function tokenCollection(uint256 tokenId) public view returns (uint256) {
         _requireMinted(tokenId);
-        return _tokenEvent[tokenId];
+        return _tokenCollection[tokenId];
     }
 
     /**
-     * @dev Gets the Token Id and Event Id for a given index of the tokens list of the requested owner
+     * @dev Gets the Token Id and collection Id for a given index of the tokens list of the requested owner
      * @param owner ( address ) Owner address of the token list to be queried
      * @param index ( uint256 ) Index to be accessed of the requested tokens list
      * @return tokenId ( uint256 ) Token Id for the given index of the tokens list owned by the requested address
-     * @return eventId ( uint256 ) Event Id for the given token
+     * @return collectionId ( uint256 ) collection Id for the given token
      */
     function tokenDetailsOfOwnerByIndex(address owner, uint256 index)
         public
         view
-        returns (uint256 tokenId, uint256 eventId)
+        returns (uint256 tokenId, uint256 collectionId)
     {
         tokenId = tokenOfOwnerByIndex(owner, index);
-        eventId = tokenEvent(tokenId);
+        collectionId = tokenCollection(tokenId);
     }
 
     /************************************************************************************************
@@ -424,6 +424,15 @@ contract UVCollectable is
     }
 
     /**
+     * @dev See {IERC5643-isRenewable}.
+     */
+    function isRenewable(
+        uint256 /*tokenId*/
+    ) external pure returns (bool) {
+        return true;
+    }
+
+    /**
      * @dev Sets the expiration of the token to the current timestamp
      * @param tokenId ( uint256 ) id for the token
      */
@@ -442,12 +451,19 @@ contract UVCollectable is
     }
 
     /**
-     * @dev See {IERC5643-isRenewable}.
+     * @dev Sets the expiration time of the given token
+     * If the `tokenId` does not exist, an error will be thrown.
+     * @param tokenId ( uint256 ) Id of the token
+     * @param newExpiration ( uint64 ) time that the token expires
+     * Emits a {SubscriptionUpdate} event after the subscription is modified.
      */
-    function isRenewable(
-        uint256 /*tokenId*/
-    ) external pure returns (bool) {
-        return true;
+    function setExpiration(uint256 tokenId, uint64 newExpiration)
+        public
+        onlyOwnerOrAdmin
+    {
+        _requireMinted(tokenId);
+        _expirations[tokenId] = newExpiration;
+        emit SubscriptionUpdate(tokenId, newExpiration);
     }
 
     /************************************************************************************************
@@ -475,21 +491,21 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the onwer
      * - The contract does not have to be paused
-     * @param eventId ( uint256 ) EventId for the new token
+     * @param collectionId ( uint256 ) collectionId for the new token
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
     function mintToken(
-        uint256 eventId,
+        uint256 collectionId,
         address to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // Updates Last Id first to not overlap
         lastId += 1;
-        return _mintToken(eventId, lastId, to, frozen, validDuration);
+        return _mintToken(collectionId, lastId, to, frozen, validDuration);
     }
 
     /**
@@ -497,23 +513,28 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the owner
      * - The contract does not have to be paused
-     * @param eventId ( uint256 ) EventId for the new token
+     * @param collectionId ( uint256 ) collectionId for the new token
      * @param to ( array of address ) The addresses that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
-    function mintEventToManyUsers(
-        uint256 eventId,
+    function mintCollectionToManyUsers(
+        uint256 collectionId,
         address[] memory to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
+        uint64 newExpiration = uint64(block.timestamp) + validDuration;
         // First mint all tokens
         for (uint256 i = 0; i < to.length; ++i) {
-            _mintToken(eventId, lastId + 1 + i, to[i], frozen, validDuration);
+            uint256 tokedId = lastId + 1 + i;
+            _mintToken(collectionId, tokedId, to[i], frozen);
+            if (validDuration > 0) {
+                setExpiration(tokedId, newExpiration);
+            }
         }
-        // Last update Last Id with the Events Id
+        // Last update Last Id with the Collection Id
         lastId += to.length;
         return true;
     }
@@ -523,30 +544,35 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the admin
      * - The contract does not have to be paused
-     * @param eventIds ( array uint256 ) Event Ids to assing to user
+     * @param collectionIds ( array uint256 ) Collection Ids to assing to user
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
-    function mintUserToManyEvents(
-        uint256[] memory eventIds,
+    function mintUserToManyCollections(
+        uint256[] memory collectionIds,
         address to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
-        for (uint256 i = 0; i < eventIds.length; ++i) {
-            _mintToken(eventIds[i], lastId + 1 + i, to, frozen, validDuration);
+        uint64 newExpiration = uint64(block.timestamp) + validDuration;
+        for (uint256 i = 0; i < collectionIds.length; ++i) {
+            uint256 tokedId = lastId + 1 + i;
+            _mintToken(collectionIds[i], tokedId, to, frozen);
+            if (validDuration > 0) {
+                setExpiration(tokedId, newExpiration);
+            }
         }
-        // Last update Last Id with the Events Id
-        lastId += eventIds.length;
+        // Last update Last Id with the Collections Id
+        lastId += collectionIds.length;
         return true;
     }
 
     /**
      * @dev Internal function to mint tokens
-     * @param eventId ( uint256 ) EventId for the new token
+     * @param collectionId ( uint256 ) collectionId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
@@ -554,19 +580,41 @@ contract UVCollectable is
      * @return A boolean that indicates if the operation was successful.
      */
     function _mintToken(
-        uint256 eventId,
+        uint256 collectionId,
         uint256 tokenId,
         address to,
         bool frozen,
         uint64 validDuration
     ) internal returns (bool) {
         _safeMint(to, tokenId);
-        _tokenEvent[tokenId] = eventId;
+        _tokenCollection[tokenId] = collectionId;
         if (frozen) {
             freeze(tokenId);
         }
         if (validDuration != 0) {
             _extendSubscription(tokenId, validDuration);
+        }
+        return true;
+    }
+
+    /**
+     * @dev Internal function to mint tokens
+     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
+     * @param to ( address ) The address that will receive the minted tokens.
+     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @return A boolean that indicates if the operation was successful.
+     */
+    function _mintToken(
+        uint256 collectionId,
+        uint256 tokenId,
+        address to,
+        bool frozen
+    ) internal returns (bool) {
+        _safeMint(to, tokenId);
+        _tokenCollection[tokenId] = collectionId;
+        if (frozen) {
+            freeze(tokenId);
         }
         return true;
     }
@@ -600,9 +648,9 @@ contract UVCollectable is
         override
         returns (address, uint256)
     {
-        uint256 _eventId = tokenEvent(_tokenId);
+        uint256 _collectionId = tokenCollection(_tokenId);
 
-        RoyaltyInfo memory royalty = _eventRoyaltyInfo[_eventId];
+        RoyaltyInfo memory royalty = _collectionRoyaltyInfo[_collectionId];
 
         if (royalty.receiver == address(0)) {
             royalty = _defaultRoyaltyInfo;
@@ -638,19 +686,22 @@ contract UVCollectable is
      * @param receiver Address to receive the royalties. Cannot be the zero address.
      * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
      */
-    function updateEventRoyalty(
-        uint256 eventId,
+    function updateCollectionRoyalty(
+        uint256 collectionId,
         address receiver,
         uint96 feeNumerator
     ) public onlyOwnerOrAdmin {
-        _setEventRoyalty(eventId, receiver, feeNumerator);
+        _setCollectionRoyalty(collectionId, receiver, feeNumerator);
     }
 
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function removeEventRoyalty(uint256 eventId) public onlyOwnerOrAdmin {
-        _resetEventRoyalty(eventId);
+    function removeCollectionRoyalty(uint256 collectionId)
+        public
+        onlyOwnerOrAdmin
+    {
+        _resetCollectionRoyalty(collectionId);
     }
 
     /**
@@ -698,8 +749,8 @@ contract UVCollectable is
      * - `receiver` cannot be the zero address.
      * - `feeNumerator` cannot be greater than the fee denominator.
      */
-    function _setEventRoyalty(
-        uint256 eventId,
+    function _setCollectionRoyalty(
+        uint256 collectionId,
         address receiver,
         uint96 feeNumerator
     ) internal virtual {
@@ -709,14 +760,17 @@ contract UVCollectable is
         );
         require(receiver != address(0), "ERC2981: Invalid parameters");
 
-        _eventRoyaltyInfo[eventId] = RoyaltyInfo(receiver, feeNumerator);
+        _collectionRoyaltyInfo[collectionId] = RoyaltyInfo(
+            receiver,
+            feeNumerator
+        );
     }
 
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function _resetEventRoyalty(uint256 eventId) internal virtual {
-        delete _eventRoyaltyInfo[eventId];
+    function _resetCollectionRoyalty(uint256 collectionId) internal virtual {
+        delete _collectionRoyaltyInfo[collectionId];
     }
 
     /************************************************************************************************
@@ -727,7 +781,7 @@ contract UVCollectable is
      */
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
-        delete _tokenEvent[tokenId];
+        delete _tokenCollection[tokenId];
         delete _tokenFrozen[tokenId];
         delete _expirations[tokenId];
     }
@@ -746,7 +800,7 @@ contract UVCollectable is
         returns (bool isOperator)
     {
         // if Seaport Proxy Address is detected, auto-return true
-        // if the operator is an admin user, auto-return true
+        // or if the operator is an admin user, auto-return true
         if (
             _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
             isAdmin(_operator)
