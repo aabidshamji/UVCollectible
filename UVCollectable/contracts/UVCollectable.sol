@@ -12,6 +12,7 @@ import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
 import "./IERC5643.sol";
+import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 
 /// @custom:security-contact security@ultraviolet.club
 contract UVCollectable is
@@ -23,7 +24,8 @@ contract UVCollectable is
     OwnableUpgradeable,
     UUPSUpgradeable,
     IERC5643,
-    ERC2771Recipient
+    ERC2771Recipient,
+    DefaultOperatorFiltererUpgradeable
 {
     /************************************************************************************************
      * Events
@@ -91,6 +93,7 @@ contract UVCollectable is
         __Ownable_init();
         __ERC721Burnable_init();
         __UUPSUpgradeable_init();
+        __DefaultOperatorFilterer_init();
 
         for (uint256 i = 0; i < __admins.length; ++i) {
             addAdmin(__admins[i]);
@@ -786,6 +789,50 @@ contract UVCollectable is
 
         // otherwise, use the default ERC721.isApprovedForAll()
         return ERC721Upgradeable.isApprovedForAll(_owner, _operator);
+    }
+
+    /************************************************************************************************
+     * Operator Filter Registry: https://github.com/ProjectOpenSea/operator-filter-registry
+     ************************************************************************************************/
+    function setApprovalForAll(address operator, bool approved)
+        public
+        override
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.setApprovalForAll(operator, approved);
+    }
+
+    function approve(address operator, uint256 tokenId)
+        public
+        override
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.approve(operator, tokenId);
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override onlyAllowedOperator(from) {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId, data);
     }
 
     /************************************************************************************************
