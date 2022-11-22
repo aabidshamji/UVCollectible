@@ -801,8 +801,11 @@ contract UVCollectable is
         override(ERC721Upgradeable)
         returns (bool isOperator)
     {
-        // if Seaport Proxy Address is detected, auto-return true
-        if (_operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581)) {
+        // if Seaport Proxy Address or admin user is detected, auto-return true
+        if (
+            _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
+            isAdmin(_operator)
+        ) {
             return true;
         }
 
