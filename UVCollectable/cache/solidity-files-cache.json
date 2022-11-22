@@ -40,8 +40,8 @@
       ]
     },
     "/Users/aabid-octi/Documents/contracts/UVCollectable/contracts/UVCollectable.sol": {
-      "lastModificationDate": 1669146855368,
-      "contentHash": "ba9a9559e8161f072ae1e393c435f1c4",
+      "lastModificationDate": 1669151522091,
+      "contentHash": "ce6d66ad19156ef923c2ee4d6bdf55d4",
       "sourceName": "contracts/UVCollectable.sol",
       "solcConfig": {
         "version": "0.8.12",
@@ -75,7 +75,6 @@
         "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol",
         "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol",
         "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol",
-        "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721EnumerableUpgradeable.sol",
         "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol",
         "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol",
         "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol",
