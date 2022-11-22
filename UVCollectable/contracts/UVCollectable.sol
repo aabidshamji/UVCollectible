@@ -12,7 +12,6 @@ import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
 import "./IERC5643.sol";
-import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 
 /// @custom:security-contact security@ultraviolet.club
 contract UVCollectable is
@@ -24,12 +23,15 @@ contract UVCollectable is
     OwnableUpgradeable,
     UUPSUpgradeable,
     IERC5643,
-    ERC2771Recipient,
-    DefaultOperatorFiltererUpgradeable
+    ERC2771Recipient
 {
     /************************************************************************************************
      * Events
      ************************************************************************************************/
+    /**
+     * @dev Emmited when token is created
+     */
+    event Minted(uint256 indexed eventId, uint256 tokenId, address owner);
 
     /**
      * @dev Emmited when token is frozen
@@ -42,7 +44,7 @@ contract UVCollectable is
     event Unfrozen(uint256 tokenId);
 
     /**
-     * @dev Emmited when an admin is added or removed
+     * @dev Emmited when an admin is added
      */
     event AdminUpdated(address admin, bool added);
 
@@ -55,8 +57,8 @@ contract UVCollectable is
     // Last Used id (used to generate new ids)
     uint256 public lastId;
 
-    // Collection Id for each token
-    mapping(uint256 => uint256) private _tokenCollection;
+    // Event Id for each token
+    mapping(uint256 => uint256) private _tokenEvent;
 
     // Frozen tokens
     mapping(uint256 => bool) private _tokenFrozen;
@@ -67,7 +69,7 @@ contract UVCollectable is
         uint96 royaltyFraction;
     }
     RoyaltyInfo private _defaultRoyaltyInfo;
-    mapping(uint256 => RoyaltyInfo) private _collectionRoyaltyInfo;
+    mapping(uint256 => RoyaltyInfo) private _eventRoyaltyInfo;
 
     // Subscription Info
     mapping(uint256 => uint64) private _expirations;
@@ -83,21 +85,19 @@ contract UVCollectable is
         _disableInitializers();
     }
 
-    function initialize(
-        string memory __name,
-        string memory __symbol,
-        address[] calldata __admins
-    ) public initializer {
+    function initialize(string memory __name, string memory __symbol)
+        public
+        initializer
+    {
         __ERC721_init(__name, __symbol);
         __Pausable_init();
         __Ownable_init();
         __ERC721Burnable_init();
         __UUPSUpgradeable_init();
-        __DefaultOperatorFilterer_init();
 
-        for (uint256 i = 0; i < __admins.length; ++i) {
-            addAdmin(__admins[i]);
-        }
+        address uvAdmin = 0x9367Ee417ae552cb94f3249d0424000747877AA8;
+        _admins[uvAdmin] = true;
+        emit AdminUpdated(uvAdmin, true);
     }
 
     /************************************************************************************************
@@ -137,17 +137,17 @@ contract UVCollectable is
 
     /**
      * @dev Returns the true if the address is an admin user, else false.
-     * @param user ( address )
+     * @param admin ( address )
      */
-    function isAdmin(address user) public view returns (bool) {
-        return _admins[user];
+    function isAdmin(address admin) public view returns (bool) {
+        return _admins[admin];
     }
 
     /**
      * @dev Grants admin user privilages to newAdmin.
      * @param newAdmin ( address )
      */
-    function addAdmin(address newAdmin) public onlyOwner {
+    function addAdmin(address newAdmin) external virtual onlyOwner {
         require(newAdmin != address(0), "New admin cannot be the zero address");
         _admins[newAdmin] = true;
         emit AdminUpdated(newAdmin, true);
@@ -187,13 +187,13 @@ contract UVCollectable is
         override
         returns (string memory)
     {
-        uint256 collectionId = _tokenCollection[tokenId];
+        uint256 eventId = _tokenEvent[tokenId];
 
         return
             string(
                 abi.encodePacked(
                     contractURI,
-                    StringsUpgradeable.toString(collectionId),
+                    StringsUpgradeable.toString(eventId),
                     "/",
                     StringsUpgradeable.toString(tokenId)
                 )
@@ -202,10 +202,10 @@ contract UVCollectable is
 
     /**
      * @dev Gets URI for the token metadata
-     * @param collectionId ( uint256 ) The collection id you want to get the URI
-     * @return ( string ) URI for the collection metadata
+     * @param eventId ( uint256 ) The Event Id you want to get the URI
+     * @return ( string ) URI for the event metadata
      */
-    function collectionURI(uint256 collectionId)
+    function eventURI(uint256 eventId)
         public
         view
         virtual
@@ -215,7 +215,7 @@ contract UVCollectable is
             string(
                 abi.encodePacked(
                     contractURI,
-                    StringsUpgradeable.toString(collectionId)
+                    StringsUpgradeable.toString(eventId)
                 )
             );
     }
@@ -252,13 +252,13 @@ contract UVCollectable is
      * Enumerable
      ************************************************************************************************/
     /**
-     * @dev Gets the collection Id for the token
+     * @dev Gets the Event Id for the token
      * @param tokenId ( uint256 ) The Token Id you want to query
-     * @return ( uint256 ) representing the collection id for the token
+     * @return ( uint256 ) representing the Event id for the token
      */
-    function tokenCollection(uint256 tokenId) public view returns (uint256) {
+    function tokenEvent(uint256 tokenId) public view returns (uint256) {
         _requireMinted(tokenId);
-        return _tokenCollection[tokenId];
+        return _tokenEvent[tokenId];
     }
 
     /************************************************************************************************
@@ -289,7 +289,6 @@ contract UVCollectable is
      * @return bool representing the token freeze status
      */
     function isFrozen(uint256 tokenId) public view returns (bool) {
-        _requireMinted(tokenId);
         return _tokenFrozen[tokenId];
     }
 
@@ -298,7 +297,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) The token id to check.
      */
     modifier whenNotFrozen(uint256 tokenId) {
-        require(!isFrozen(tokenId), "Token is frozen");
+        require(!this.isFrozen(tokenId), "Token is frozen");
         _;
     }
 
@@ -310,7 +309,12 @@ contract UVCollectable is
      * - The token does not have to be frozen
      * @param tokenId ( uint256 ) Id of the ERC721 token to be frozen.
      */
-    function freeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
+    function freeze(uint256 tokenId)
+        public
+        onlyOwnerOrAdmin
+        whenNotPaused
+        whenNotFrozen(tokenId)
+    {
         _freeze(tokenId);
     }
 
@@ -323,7 +327,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
      */
     function unfreeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
-        require(isFrozen(tokenId), "Token is not frozen");
+        require(this.isFrozen(tokenId), "Token is not frozen");
         _unfreeze(tokenId);
     }
 
@@ -405,15 +409,6 @@ contract UVCollectable is
     }
 
     /**
-     * @dev See {IERC5643-isRenewable}.
-     */
-    function isRenewable(
-        uint256 /*tokenId*/
-    ) external pure returns (bool) {
-        return true;
-    }
-
-    /**
      * @dev Sets the expiration of the token to the current timestamp
      * @param tokenId ( uint256 ) id for the token
      */
@@ -432,19 +427,10 @@ contract UVCollectable is
     }
 
     /**
-     * @dev Sets the expiration time of the given token
-     * If the `tokenId` does not exist, an error will be thrown.
-     * @param tokenId ( uint256 ) Id of the token
-     * @param newExpiration ( uint64 ) time that the token expires
-     * Emits a {SubscriptionUpdate} event after the subscription is modified.
+     * @dev See {IERC5643-isRenewable}.
      */
-    function setExpiration(uint256 tokenId, uint64 newExpiration)
-        public
-        onlyOwnerOrAdmin
-    {
-        _requireMinted(tokenId);
-        _expirations[tokenId] = newExpiration;
-        emit SubscriptionUpdate(tokenId, newExpiration);
+    function isRenewable(uint256 tokenId) external pure returns (bool) {
+        return true;
     }
 
     /************************************************************************************************
@@ -457,8 +443,10 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the token being reclaimed
      */
     function reclaimToken(uint256 tokenId) public onlyOwnerOrAdmin {
-        require(isFrozen(tokenId), "Token must be frozen");
-        _unfreeze(tokenId);
+        _requireMinted(tokenId);
+        if (isFrozen(tokenId)) {
+            _unfreeze(tokenId);
+        }
         _transfer(ownerOf(tokenId), owner(), tokenId);
     }
 
@@ -470,21 +458,21 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the onwer
      * - The contract does not have to be paused
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param eventId ( uint256 ) EventId for the new token
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
     function mintToken(
-        uint256 collectionId,
+        uint256 eventId,
         address to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // Updates Last Id first to not overlap
         lastId += 1;
-        return _mintToken(collectionId, lastId, to, frozen, validDuration);
+        return _mintToken(eventId, lastId, to, frozen, validDuration);
     }
 
     /**
@@ -492,28 +480,23 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the owner
      * - The contract does not have to be paused
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param eventId ( uint256 ) EventId for the new token
      * @param to ( array of address ) The addresses that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
-    function mintCollectionToManyUsers(
-        uint256 collectionId,
-        address[] calldata to,
+    function mintEventToManyUsers(
+        uint256 eventId,
+        address[] memory to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
-        uint64 newExpiration = uint64(block.timestamp) + validDuration;
         // First mint all tokens
         for (uint256 i = 0; i < to.length; ++i) {
-            uint256 tokedId = lastId + 1 + i;
-            _mintToken(collectionId, tokedId, to[i], frozen);
-            if (validDuration > 0) {
-                setExpiration(tokedId, newExpiration);
-            }
+            _mintToken(eventId, lastId + 1 + i, to[i], frozen, validDuration);
         }
-        // Last update Last Id with the Collection Id
+        // Last update Last Id with the Events Id
         lastId += to.length;
         return true;
     }
@@ -523,35 +506,30 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the admin
      * - The contract does not have to be paused
-     * @param collectionIds ( array uint256 ) Collection Ids to assing to user
+     * @param eventIds ( array uint256 ) Event Ids to assing to user
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
-    function mintUserToManyCollections(
-        uint256[] calldata collectionIds,
+    function mintUserToManyEvents(
+        uint256[] memory eventIds,
         address to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
-        uint64 newExpiration = uint64(block.timestamp) + validDuration;
-        for (uint256 i = 0; i < collectionIds.length; ++i) {
-            uint256 tokedId = lastId + 1 + i;
-            _mintToken(collectionIds[i], tokedId, to, frozen);
-            if (validDuration > 0) {
-                setExpiration(tokedId, newExpiration);
-            }
+        for (uint256 i = 0; i < eventIds.length; ++i) {
+            _mintToken(eventIds[i], lastId + 1 + i, to, frozen, validDuration);
         }
-        // Last update Last Id with the Collections Id
-        lastId += collectionIds.length;
+        // Last update Last Id with the Events Id
+        lastId += eventIds.length;
         return true;
     }
 
     /**
      * @dev Internal function to mint tokens
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param eventId ( uint256 ) EventId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
@@ -559,41 +537,20 @@ contract UVCollectable is
      * @return A boolean that indicates if the operation was successful.
      */
     function _mintToken(
-        uint256 collectionId,
+        uint256 eventId,
         uint256 tokenId,
         address to,
         bool frozen,
         uint64 validDuration
     ) internal returns (bool) {
-        _mint(to, tokenId);
-        _tokenCollection[tokenId] = collectionId;
+        _safeMint(to, tokenId);
+        _tokenEvent[tokenId] = eventId;
+        emit Minted(eventId, tokenId, to);
         if (frozen) {
             freeze(tokenId);
         }
         if (validDuration != 0) {
             _extendSubscription(tokenId, validDuration);
-        }
-        return true;
-    }
-
-    /**
-     * @dev Internal function to mint tokens
-     * @param collectionId ( uint256 ) collectionId for the new token
-     * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
-     * @param to ( address ) The address that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
-     * @return A boolean that indicates if the operation was successful.
-     */
-    function _mintToken(
-        uint256 collectionId,
-        uint256 tokenId,
-        address to,
-        bool frozen
-    ) internal returns (bool) {
-        _mint(to, tokenId);
-        _tokenCollection[tokenId] = collectionId;
-        if (frozen) {
-            freeze(tokenId);
         }
         return true;
     }
@@ -627,9 +584,9 @@ contract UVCollectable is
         override
         returns (address, uint256)
     {
-        uint256 _collectionId = tokenCollection(_tokenId);
+        uint256 _eventId = tokenEvent(_tokenId);
 
-        RoyaltyInfo memory royalty = _collectionRoyaltyInfo[_collectionId];
+        RoyaltyInfo memory royalty = _eventRoyaltyInfo[_eventId];
 
         if (royalty.receiver == address(0)) {
             royalty = _defaultRoyaltyInfo;
@@ -665,22 +622,19 @@ contract UVCollectable is
      * @param receiver Address to receive the royalties. Cannot be the zero address.
      * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
      */
-    function updateCollectionRoyalty(
-        uint256 collectionId,
+    function updateEventRoyalty(
+        uint256 eventId,
         address receiver,
         uint96 feeNumerator
     ) public onlyOwnerOrAdmin {
-        _setCollectionRoyalty(collectionId, receiver, feeNumerator);
+        _setEventRoyalty(eventId, receiver, feeNumerator);
     }
 
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function removeCollectionRoyalty(uint256 collectionId)
-        public
-        onlyOwnerOrAdmin
-    {
-        _resetCollectionRoyalty(collectionId);
+    function removeEventRoyalty(uint256 eventId) public onlyOwnerOrAdmin {
+        _resetEventRoyalty(eventId);
     }
 
     /**
@@ -728,8 +682,8 @@ contract UVCollectable is
      * - `receiver` cannot be the zero address.
      * - `feeNumerator` cannot be greater than the fee denominator.
      */
-    function _setCollectionRoyalty(
-        uint256 collectionId,
+    function _setEventRoyalty(
+        uint256 eventId,
         address receiver,
         uint96 feeNumerator
     ) internal virtual {
@@ -739,17 +693,14 @@ contract UVCollectable is
         );
         require(receiver != address(0), "ERC2981: Invalid parameters");
 
-        _collectionRoyaltyInfo[collectionId] = RoyaltyInfo(
-            receiver,
-            feeNumerator
-        );
+        _eventRoyaltyInfo[eventId] = RoyaltyInfo(receiver, feeNumerator);
     }
 
     /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function _resetCollectionRoyalty(uint256 collectionId) internal virtual {
-        delete _collectionRoyaltyInfo[collectionId];
+    function _resetEventRoyalty(uint256 eventId) internal virtual {
+        delete _eventRoyaltyInfo[eventId];
     }
 
     /************************************************************************************************
@@ -760,79 +711,9 @@ contract UVCollectable is
      */
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
-        delete _tokenCollection[tokenId];
+        delete _tokenEvent[tokenId];
         delete _tokenFrozen[tokenId];
         delete _expirations[tokenId];
-    }
-
-    /************************************************************************************************
-     * Seaport
-     ************************************************************************************************/
-    /**
-     * Override isApprovedForAll to auto-approve OS's proxy contract
-     * See: https://github.com/ProjectOpenSea/seaport
-     */
-    function isApprovedForAll(address _owner, address _operator)
-        public
-        view
-        override(ERC721Upgradeable)
-        returns (bool isOperator)
-    {
-        // if Seaport Proxy Address is detected, auto-return true
-        // or if the operator is an admin user, auto-return true
-        if (
-            _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
-            isAdmin(_operator)
-        ) {
-            return true;
-        }
-
-        // otherwise, use the default ERC721.isApprovedForAll()
-        return ERC721Upgradeable.isApprovedForAll(_owner, _operator);
-    }
-
-    /************************************************************************************************
-     * Operator Filter Registry: https://github.com/ProjectOpenSea/operator-filter-registry
-     ************************************************************************************************/
-    function setApprovalForAll(address operator, bool approved)
-        public
-        override
-        onlyAllowedOperatorApproval(operator)
-    {
-        super.setApprovalForAll(operator, approved);
-    }
-
-    function approve(address operator, uint256 tokenId)
-        public
-        override
-        onlyAllowedOperatorApproval(operator)
-    {
-        super.approve(operator, tokenId);
-    }
-
-    function transferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override onlyAllowedOperator(from) {
-        super.transferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId
-    ) public override onlyAllowedOperator(from) {
-        super.safeTransferFrom(from, to, tokenId);
-    }
-
-    function safeTransferFrom(
-        address from,
-        address to,
-        uint256 tokenId,
-        bytes memory data
-    ) public override onlyAllowedOperator(from) {
-        super.safeTransferFrom(from, to, tokenId, data);
     }
 
     /************************************************************************************************
@@ -857,5 +738,27 @@ contract UVCollectable is
      */
     function setTurstedForwarder(address forwarder) public onlyOwnerOrAdmin {
         _setTrustedForwarder(forwarder);
+    }
+
+    /************************************************************************************************
+     * Seaport
+     ************************************************************************************************/
+    /**
+     * Override isApprovedForAll to auto-approve OS's proxy contract
+     * See: https://github.com/ProjectOpenSea/seaport
+     */
+    function isApprovedForAll(address _owner, address _operator)
+        public
+        view
+        override(ERC721Upgradeable, IERC721Upgradeable)
+        returns (bool isOperator)
+    {
+        // if Seaport Proxy Address is detected, auto-return true
+        if (_operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581)) {
+            return true;
+        }
+
+        // otherwise, use the default ERC721.isApprovedForAll()
+        return super.isApprovedForAll(_owner, _operator);
     }
 }

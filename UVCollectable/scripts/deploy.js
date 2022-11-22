@@ -26,6 +26,7 @@ async function main() {
     await run(`verify:verify`, {
         address: contractAddress,
     });
+
 }
 
 main().then(() => process.exit(0)).catch(error => {
