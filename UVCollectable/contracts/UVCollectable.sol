@@ -81,19 +81,20 @@ contract UVCollectable is
         _disableInitializers();
     }
 
-    function initialize(string memory __name, string memory __symbol)
-        public
-        initializer
-    {
+    function initialize(
+        string memory __name,
+        string memory __symbol,
+        address[] calldata __admins
+    ) public initializer {
         __ERC721_init(__name, __symbol);
         __Pausable_init();
         __Ownable_init();
         __ERC721Burnable_init();
         __UUPSUpgradeable_init();
 
-        address uvAdmin = 0x9367Ee417ae552cb94f3249d0424000747877AA8;
-        _admins[uvAdmin] = true;
-        emit AdminUpdated(uvAdmin, true);
+        for (uint256 i = 0; i < __admins.length; ++i) {
+            addAdmin(__admins[i]);
+        }
     }
 
     /************************************************************************************************
@@ -143,7 +144,7 @@ contract UVCollectable is
      * @dev Grants admin user privilages to newAdmin.
      * @param newAdmin ( address )
      */
-    function addAdmin(address newAdmin) external virtual onlyOwner {
+    function addAdmin(address newAdmin) public onlyOwner {
         require(newAdmin != address(0), "New admin cannot be the zero address");
         _admins[newAdmin] = true;
         emit AdminUpdated(newAdmin, true);
@@ -496,7 +497,7 @@ contract UVCollectable is
      */
     function mintCollectionToManyUsers(
         uint256 collectionId,
-        address[] memory to,
+        address[] calldata to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
@@ -526,7 +527,7 @@ contract UVCollectable is
      * @return A boolean that indicates if the operation was successful.
      */
     function mintUserToManyCollections(
-        uint256[] memory collectionIds,
+        uint256[] calldata collectionIds,
         address to,
         bool frozen,
         uint64 validDuration
