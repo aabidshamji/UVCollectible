@@ -297,6 +297,14 @@ contract UVCollectable is
     }
 
     /**
+     * @dev Reverts if the `tokenId` has not been minted yet.
+     */
+    function _requireFrozen(uint256 tokenId) internal view virtual {
+        _requireMinted(tokenId);
+        require(isFrozen(tokenId), "Token is not frozen");
+    }
+
+    /**
      * @dev Freeze a specific ERC721 token.
      * Requires
      * - The msg sender to be the owner
@@ -322,7 +330,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
      */
     function unfreeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
-        require(this.isFrozen(tokenId), "Token is not frozen");
+        _requireFrozen(tokenId);
         _unfreeze(tokenId);
     }
 
@@ -404,30 +412,28 @@ contract UVCollectable is
     }
 
     /**
-     * @dev Sets the expiration of the token to the current timestamp
-     * @param tokenId ( uint256 ) id for the token
-     */
-    function expireSubscription(uint256 tokenId)
-        external
-        virtual
-        onlyOwnerOrAdmin
-    {
-        uint64 currentTime = uint64(block.timestamp);
-        require(
-            _expirations[tokenId] >= currentTime,
-            "Token cannot already be expired"
-        );
-        _expirations[tokenId] = currentTime;
-        emit SubscriptionUpdate(tokenId, currentTime);
-    }
-
-    /**
      * @dev See {IERC5643-isRenewable}.
      */
     function isRenewable(
         uint256 /*tokenId*/
     ) external pure returns (bool) {
         return true;
+    }
+
+    /**
+     * @dev Sets the expiration time of the given token
+     * If the `tokenId` does not exist, an error will be thrown.
+     * @param tokenId ( uint256 ) Id of the token
+     * @param newExpiration ( uint64 ) time that the token expires
+     * Emits a {SubscriptionUpdate} event after the subscription is modified.
+     */
+    function setExpiration(uint256 tokenId, uint64 newExpiration)
+        public
+        onlyOwnerOrAdmin
+    {
+        _requireMinted(tokenId);
+        _expirations[tokenId] = newExpiration;
+        emit SubscriptionUpdate(tokenId, newExpiration);
     }
 
     /************************************************************************************************
@@ -440,10 +446,8 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the token being reclaimed
      */
     function reclaimToken(uint256 tokenId) public onlyOwnerOrAdmin {
-        _requireMinted(tokenId);
-        if (isFrozen(tokenId)) {
-            _unfreeze(tokenId);
-        }
+        _requireFrozen(tokenId);
+        _unfreeze(tokenId);
         _transfer(ownerOf(tokenId), owner(), tokenId);
     }
 
@@ -490,14 +494,18 @@ contract UVCollectable is
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
-        for (uint256 i = 0; i < to.length; ++i) {
-            _mintToken(
-                collectionId,
-                lastId + 1 + i,
-                to[i],
-                frozen,
-                validDuration
-            );
+        if (validDuration > 0) {
+            uint256 tokenId;
+            uint64 newExpiration = uint64(block.timestamp) + validDuration;
+            for (uint256 i = 0; i < to.length; ++i) {
+                tokenId = lastId + 1 + i;
+                _mintTokenV2(collectionId, tokenId, to[i], frozen);
+                setExpiration(tokenId, newExpiration);
+            }
+        } else {
+            for (uint256 i = 0; i < to.length; ++i) {
+                _mintTokenV2(collectionId, lastId + 1 + i, to[i], frozen);
+            }
         }
         // Last update Last Id
         lastId += to.length;
@@ -522,14 +530,18 @@ contract UVCollectable is
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
-        for (uint256 i = 0; i < collectionIds.length; ++i) {
-            _mintToken(
-                collectionIds[i],
-                lastId + 1 + i,
-                to,
-                frozen,
-                validDuration
-            );
+        if (validDuration > 0) {
+            uint256 tokenId;
+            uint64 newExpiration = uint64(block.timestamp) + validDuration;
+            for (uint256 i = 0; i < collectionIds.length; ++i) {
+                tokenId = lastId + 1 + i;
+                _mintTokenV2(collectionIds[i], tokenId, to, frozen);
+                setExpiration(tokenId, newExpiration);
+            }
+        } else {
+            for (uint256 i = 0; i < collectionIds.length; ++i) {
+                _mintTokenV2(collectionIds[i], lastId + 1 + i, to, frozen);
+            }
         }
         // Last update Last Id
         lastId += collectionIds.length;
@@ -559,6 +571,28 @@ contract UVCollectable is
         }
         if (validDuration != 0) {
             _extendSubscription(tokenId, validDuration);
+        }
+        return true;
+    }
+
+    /**
+     * @dev Internal function to mint tokens without subscription
+     * @param collectionId ( uint256 ) CollectionId for the new token
+     * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
+     * @param to ( address ) The address that will receive the minted tokens.
+     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @return A boolean that indicates if the operation was successful.
+     */
+    function _mintTokenV2(
+        uint256 collectionId,
+        uint256 tokenId,
+        address to,
+        bool frozen
+    ) internal returns (bool) {
+        _safeMint(to, tokenId);
+        _tokenCollection[tokenId] = collectionId;
+        if (frozen) {
+            freeze(tokenId);
         }
         return true;
     }

@@ -20,7 +20,7 @@ async function main() {
     const eventId = "10"
     await contract
         .mintToken(eventId, to, false, 0)
-        .then((tx) => tx.wait(1))
+        .then((tx) => tx.wait(6))
         .then((receipt) => console.log(`Your transaction is confirmed, its receipt is: ${receipt.transactionHash}`))
         .catch((e) => console.log("something went wrong", e));
 
