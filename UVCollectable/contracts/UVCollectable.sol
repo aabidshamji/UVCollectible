@@ -564,7 +564,7 @@ contract UVCollectable is
         bool frozen,
         uint64 validDuration
     ) internal returns (bool) {
-        _safeMint(to, tokenId);
+        _mint(to, tokenId);
         _tokenCollection[tokenId] = collectionId;
         if (frozen) {
             freeze(tokenId);
@@ -589,7 +589,7 @@ contract UVCollectable is
         address to,
         bool frozen
     ) internal returns (bool) {
-        _safeMint(to, tokenId);
+        _mint(to, tokenId);
         _tokenCollection[tokenId] = collectionId;
         if (frozen) {
             freeze(tokenId);
