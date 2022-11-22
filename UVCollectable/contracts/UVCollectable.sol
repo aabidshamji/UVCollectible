@@ -11,6 +11,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Burnab
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
+import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
@@ -23,7 +24,8 @@ contract UVCollectable is
     OwnableUpgradeable,
     UUPSUpgradeable,
     IERC5643,
-    ERC2771Recipient
+    ERC2771Recipient,
+    DefaultOperatorFiltererUpgradeable
 {
     /************************************************************************************************
      * Events
@@ -89,6 +91,7 @@ contract UVCollectable is
         __Ownable_init();
         __ERC721Burnable_init();
         __UUPSUpgradeable_init();
+        __DefaultOperatorFilterer_init();
 
         address uvAdmin = 0x9367Ee417ae552cb94f3249d0424000747877AA8;
         _admins[uvAdmin] = true;
@@ -244,7 +247,7 @@ contract UVCollectable is
     }
 
     /************************************************************************************************
-     * Enumerable
+     * Collections
      ************************************************************************************************/
     /**
      * @dev Gets the Collection Id for the token
@@ -489,7 +492,7 @@ contract UVCollectable is
      */
     function mintCollectionToManyUsers(
         uint256 collectionId,
-        address[] memory to,
+        address[] calldata to,
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
@@ -524,7 +527,7 @@ contract UVCollectable is
      * @return A boolean that indicates if the operation was successful.
      */
     function mintUserToManyCollections(
-        uint256[] memory collectionIds,
+        uint256[] calldata collectionIds,
         address to,
         bool frozen,
         uint64 validDuration
@@ -765,30 +768,6 @@ contract UVCollectable is
     }
 
     /************************************************************************************************
-     * Admin
-     ************************************************************************************************/
-    // The following functions are overrides required by Solidity.
-    function supportsInterface(bytes4 interfaceId)
-        public
-        view
-        override(ERC721Upgradeable, IERC165Upgradeable)
-        returns (bool)
-    {
-        return
-            interfaceId == type(IERC5643).interfaceId ||
-            interfaceId == type(IERC2981Upgradeable).interfaceId ||
-            super.supportsInterface(interfaceId);
-    }
-
-    /**
-     * @dev Allows the owner to update the trusted forwarder for erc2771 transactions
-     * @param forwarder ( address ) contract address of the new forwarder
-     */
-    function setTurstedForwarder(address forwarder) public onlyOwnerOrAdmin {
-        _setTrustedForwarder(forwarder);
-    }
-
-    /************************************************************************************************
      * Seaport
      ************************************************************************************************/
     /**
@@ -811,5 +790,73 @@ contract UVCollectable is
 
         // otherwise, use the default ERC721.isApprovedForAll()
         return super.isApprovedForAll(_owner, _operator);
+    }
+
+    /************************************************************************************************
+     * Operator Filter Registry: https://github.com/ProjectOpenSea/operator-filter-registry
+     ************************************************************************************************/
+    function setApprovalForAll(address operator, bool approved)
+        public
+        override
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.setApprovalForAll(operator, approved);
+    }
+
+    function approve(address operator, uint256 tokenId)
+        public
+        override
+        onlyAllowedOperatorApproval(operator)
+    {
+        super.approve(operator, tokenId);
+    }
+
+    function transferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override onlyAllowedOperator(from) {
+        super.transferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId
+    ) public override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId);
+    }
+
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) public override onlyAllowedOperator(from) {
+        super.safeTransferFrom(from, to, tokenId, data);
+    }
+
+    /************************************************************************************************
+     * Admin
+     ************************************************************************************************/
+    // The following functions are overrides required by Solidity.
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        override(ERC721Upgradeable, IERC165Upgradeable)
+        returns (bool)
+    {
+        return
+            interfaceId == type(IERC5643).interfaceId ||
+            interfaceId == type(IERC2981Upgradeable).interfaceId ||
+            super.supportsInterface(interfaceId);
+    }
+
+    /**
+     * @dev Allows the owner to update the trusted forwarder for erc2771 transactions
+     * @param forwarder ( address ) contract address of the new forwarder
+     */
+    function setTurstedForwarder(address forwarder) public onlyOwnerOrAdmin {
+        _setTrustedForwarder(forwarder);
     }
 }
