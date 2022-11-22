@@ -285,6 +285,7 @@ contract UVCollectable is
      * @return bool representing the token freeze status
      */
     function isFrozen(uint256 tokenId) public view returns (bool) {
+        _requireMinted(tokenId);
         return _tokenFrozen[tokenId];
     }
 
@@ -293,7 +294,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) The token id to check.
      */
     modifier whenNotFrozen(uint256 tokenId) {
-        require(!this.isFrozen(tokenId), "Token is frozen");
+        require(!isFrozen(tokenId), "Token is frozen");
         _;
     }
 
@@ -305,12 +306,7 @@ contract UVCollectable is
      * - The token does not have to be frozen
      * @param tokenId ( uint256 ) Id of the ERC721 token to be frozen.
      */
-    function freeze(uint256 tokenId)
-        public
-        onlyOwnerOrAdmin
-        whenNotPaused
-        whenNotFrozen(tokenId)
-    {
+    function freeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
         _freeze(tokenId);
     }
 
@@ -323,7 +319,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
      */
     function unfreeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
-        require(this.isFrozen(tokenId), "Token is not frozen");
+        require(isFrozen(tokenId), "Token is not frozen");
         _unfreeze(tokenId);
     }
 
@@ -457,10 +453,8 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the token being reclaimed
      */
     function reclaimToken(uint256 tokenId) public onlyOwnerOrAdmin {
-        _requireMinted(tokenId);
-        if (isFrozen(tokenId)) {
-            _unfreeze(tokenId);
-        }
+        require(isFrozen(tokenId), "Token must be frozen");
+        _unfreeze(tokenId);
         _transfer(ownerOf(tokenId), owner(), tokenId);
     }
 
