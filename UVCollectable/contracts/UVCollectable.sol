@@ -54,7 +54,7 @@ contract UVCollectable is
     // Last Used id (used to generate new ids)
     uint256 public lastId;
 
-    // Event Id for each token
+    // Collection Id for each token
     mapping(uint256 => uint256) private _tokenCollection;
 
     // Frozen tokens
@@ -82,10 +82,12 @@ contract UVCollectable is
         _disableInitializers();
     }
 
-    function initialize(string memory __name, string memory __symbol)
-        public
-        initializer
-    {
+    function initialize(
+        string memory __name,
+        string memory __symbol,
+        string memory __contractURI,
+        address[] calldata __admins
+    ) public initializer {
         __ERC721_init(__name, __symbol);
         __Pausable_init();
         __Ownable_init();
@@ -93,9 +95,11 @@ contract UVCollectable is
         __UUPSUpgradeable_init();
         __DefaultOperatorFilterer_init();
 
-        address uvAdmin = 0x9367Ee417ae552cb94f3249d0424000747877AA8;
-        _admins[uvAdmin] = true;
-        emit AdminUpdated(uvAdmin, true);
+        updateContractURI(__contractURI);
+
+        for (uint256 i = 0; i < __admins.length; ++i) {
+            addAdmin(__admins[i]);
+        }
     }
 
     /************************************************************************************************
@@ -145,7 +149,7 @@ contract UVCollectable is
      * @dev Grants admin user privilages to newAdmin.
      * @param newAdmin ( address )
      */
-    function addAdmin(address newAdmin) external virtual onlyOwner {
+    function addAdmin(address newAdmin) public onlyOwnerOrAdmin {
         require(newAdmin != address(0), "New admin cannot be the zero address");
         _admins[newAdmin] = true;
         emit AdminUpdated(newAdmin, true);
@@ -185,7 +189,7 @@ contract UVCollectable is
         override
         returns (string memory)
     {
-        uint256 collectionId = _tokenCollection[tokenId];
+        uint256 collectionId = tokenCollection(tokenId);
 
         return
             string(

@@ -5,7 +5,8 @@ async function main() {
 
     const contract = await upgrades.deployProxy(factory, [
         "CRT1",
-        "Creator 1 x Ultraviolet"
+        "Creator 1 x Ultraviolet",
+        ["0x9367Ee417ae552cb94f3249d0424000747877AA8"]
     ], {
         kind: 'uups',
         initializer: "initialize"
