@@ -6,6 +6,7 @@ async function main() {
     const contract = await upgrades.deployProxy(factory, [
         "CRT1",
         "Creator 1 x Ultraviolet",
+        "token.ultraviolet.club/collectables/creatorusername1/",
         ["0x9367Ee417ae552cb94f3249d0424000747877AA8"]
     ], {
         kind: 'uups',
@@ -14,6 +15,16 @@ async function main() {
     console.log("Deplying transaction and waiting 6 blocks...")
     await contract.deployTransaction.wait(6)
     console.log("NFT deployed to:", contract.address);
+
+    console.log("Minting token...");
+
+    const to = "0x9367Ee417ae552cb94f3249d0424000747877AA8"
+    const eventId = "10"
+    await contract
+        .mintToken(eventId, to, false, 0)
+        .then((tx) => tx.wait(6))
+        .then((receipt) => console.log(`Your transaction is confirmed, its receipt is: ${receipt.transactionHash}`))
+        .catch((e) => console.log("something went wrong", e));
 
     // This solves the bug in Mumbai network where the contract address is not the real one
     const txHash = contract.deployTransaction.hash
@@ -35,5 +46,5 @@ main().then(() => process.exit(0)).catch(error => {
     process.exit(1);
 });
 
-// npx hardhat run scripts/deploy.js --network mumbai
+// npx hardhat run scripts/deploy_mint.js --network mumbai
 // npx hardhat verify --network mumbai PROXY_ADDRESS

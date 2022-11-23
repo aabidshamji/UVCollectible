@@ -11,8 +11,8 @@ import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721Burnab
 import "@openzeppelin/contracts-upgradeable/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
-import "./IERC5643.sol";
 import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
+import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
 contract UVCollectable is
@@ -30,7 +30,6 @@ contract UVCollectable is
     /************************************************************************************************
      * Events
      ************************************************************************************************/
-
     /**
      * @dev Emmited when token is frozen
      */
@@ -42,7 +41,7 @@ contract UVCollectable is
     event Unfrozen(uint256 tokenId);
 
     /**
-     * @dev Emmited when an admin is added or removed
+     * @dev Emmited when an admin is added
      */
     event AdminUpdated(address admin, bool added);
 
@@ -86,6 +85,7 @@ contract UVCollectable is
     function initialize(
         string memory __name,
         string memory __symbol,
+        string memory __contractURI,
         address[] calldata __admins
     ) public initializer {
         __ERC721_init(__name, __symbol);
@@ -94,6 +94,8 @@ contract UVCollectable is
         __ERC721Burnable_init();
         __UUPSUpgradeable_init();
         __DefaultOperatorFilterer_init();
+
+        updateContractURI(__contractURI);
 
         for (uint256 i = 0; i < __admins.length; ++i) {
             addAdmin(__admins[i]);
@@ -137,17 +139,17 @@ contract UVCollectable is
 
     /**
      * @dev Returns the true if the address is an admin user, else false.
-     * @param user ( address )
+     * @param admin ( address )
      */
-    function isAdmin(address user) public view returns (bool) {
-        return _admins[user];
+    function isAdmin(address admin) public view returns (bool) {
+        return _admins[admin];
     }
 
     /**
      * @dev Grants admin user privilages to newAdmin.
      * @param newAdmin ( address )
      */
-    function addAdmin(address newAdmin) public onlyOwner {
+    function addAdmin(address newAdmin) public onlyOwnerOrAdmin {
         require(newAdmin != address(0), "New admin cannot be the zero address");
         _admins[newAdmin] = true;
         emit AdminUpdated(newAdmin, true);
@@ -187,7 +189,7 @@ contract UVCollectable is
         override
         returns (string memory)
     {
-        uint256 collectionId = _tokenCollection[tokenId];
+        uint256 collectionId = tokenCollection(tokenId);
 
         return
             string(
@@ -202,7 +204,7 @@ contract UVCollectable is
 
     /**
      * @dev Gets URI for the token metadata
-     * @param collectionId ( uint256 ) The collection id you want to get the URI
+     * @param collectionId ( uint256 ) The Event Id you want to get the URI
      * @return ( string ) URI for the collection metadata
      */
     function collectionURI(uint256 collectionId)
@@ -249,12 +251,12 @@ contract UVCollectable is
     }
 
     /************************************************************************************************
-     * Enumerable
+     * Collections
      ************************************************************************************************/
     /**
-     * @dev Gets the collection Id for the token
+     * @dev Gets the Collection Id for the token
      * @param tokenId ( uint256 ) The Token Id you want to query
-     * @return ( uint256 ) representing the collection id for the token
+     * @return ( uint256 ) representing the Collection id for the token
      */
     function tokenCollection(uint256 tokenId) public view returns (uint256) {
         _requireMinted(tokenId);
@@ -289,7 +291,6 @@ contract UVCollectable is
      * @return bool representing the token freeze status
      */
     function isFrozen(uint256 tokenId) public view returns (bool) {
-        _requireMinted(tokenId);
         return _tokenFrozen[tokenId];
     }
 
@@ -298,8 +299,16 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) The token id to check.
      */
     modifier whenNotFrozen(uint256 tokenId) {
-        require(!isFrozen(tokenId), "Token is frozen");
+        require(!this.isFrozen(tokenId), "Token is frozen");
         _;
+    }
+
+    /**
+     * @dev Reverts if the `tokenId` has not been minted yet.
+     */
+    function _requireFrozen(uint256 tokenId) internal view virtual {
+        _requireMinted(tokenId);
+        require(isFrozen(tokenId), "Token is not frozen");
     }
 
     /**
@@ -310,7 +319,12 @@ contract UVCollectable is
      * - The token does not have to be frozen
      * @param tokenId ( uint256 ) Id of the ERC721 token to be frozen.
      */
-    function freeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
+    function freeze(uint256 tokenId)
+        public
+        onlyOwnerOrAdmin
+        whenNotPaused
+        whenNotFrozen(tokenId)
+    {
         _freeze(tokenId);
     }
 
@@ -323,7 +337,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
      */
     function unfreeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
-        require(isFrozen(tokenId), "Token is not frozen");
+        _requireFrozen(tokenId);
         _unfreeze(tokenId);
     }
 
@@ -414,24 +428,6 @@ contract UVCollectable is
     }
 
     /**
-     * @dev Sets the expiration of the token to the current timestamp
-     * @param tokenId ( uint256 ) id for the token
-     */
-    function expireSubscription(uint256 tokenId)
-        external
-        virtual
-        onlyOwnerOrAdmin
-    {
-        uint64 currentTime = uint64(block.timestamp);
-        require(
-            _expirations[tokenId] >= currentTime,
-            "Token cannot already be expired"
-        );
-        _expirations[tokenId] = currentTime;
-        emit SubscriptionUpdate(tokenId, currentTime);
-    }
-
-    /**
      * @dev Sets the expiration time of the given token
      * If the `tokenId` does not exist, an error will be thrown.
      * @param tokenId ( uint256 ) Id of the token
@@ -457,7 +453,7 @@ contract UVCollectable is
      * @param tokenId ( uint256 ) Id of the token being reclaimed
      */
     function reclaimToken(uint256 tokenId) public onlyOwnerOrAdmin {
-        require(isFrozen(tokenId), "Token must be frozen");
+        _requireFrozen(tokenId);
         _unfreeze(tokenId);
         _transfer(ownerOf(tokenId), owner(), tokenId);
     }
@@ -470,7 +466,7 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the onwer
      * - The contract does not have to be paused
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
@@ -492,7 +488,7 @@ contract UVCollectable is
      * Requires
      * - The msg sender to be the owner
      * - The contract does not have to be paused
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( array of address ) The addresses that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
@@ -504,16 +500,21 @@ contract UVCollectable is
         bool frozen,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
-        uint64 newExpiration = uint64(block.timestamp) + validDuration;
         // First mint all tokens
-        for (uint256 i = 0; i < to.length; ++i) {
-            uint256 tokedId = lastId + 1 + i;
-            _mintToken(collectionId, tokedId, to[i], frozen);
-            if (validDuration > 0) {
-                setExpiration(tokedId, newExpiration);
+        if (validDuration > 0) {
+            uint256 tokenId;
+            uint64 newExpiration = uint64(block.timestamp) + validDuration;
+            for (uint256 i = 0; i < to.length; ++i) {
+                tokenId = lastId + 1 + i;
+                _mintTokenV2(collectionId, tokenId, to[i], frozen);
+                setExpiration(tokenId, newExpiration);
+            }
+        } else {
+            for (uint256 i = 0; i < to.length; ++i) {
+                _mintTokenV2(collectionId, lastId + 1 + i, to[i], frozen);
             }
         }
-        // Last update Last Id with the Collection Id
+        // Last update Last Id
         lastId += to.length;
         return true;
     }
@@ -536,22 +537,27 @@ contract UVCollectable is
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
-        uint64 newExpiration = uint64(block.timestamp) + validDuration;
-        for (uint256 i = 0; i < collectionIds.length; ++i) {
-            uint256 tokedId = lastId + 1 + i;
-            _mintToken(collectionIds[i], tokedId, to, frozen);
-            if (validDuration > 0) {
-                setExpiration(tokedId, newExpiration);
+        if (validDuration > 0) {
+            uint256 tokenId;
+            uint64 newExpiration = uint64(block.timestamp) + validDuration;
+            for (uint256 i = 0; i < collectionIds.length; ++i) {
+                tokenId = lastId + 1 + i;
+                _mintTokenV2(collectionIds[i], tokenId, to, frozen);
+                setExpiration(tokenId, newExpiration);
+            }
+        } else {
+            for (uint256 i = 0; i < collectionIds.length; ++i) {
+                _mintTokenV2(collectionIds[i], lastId + 1 + i, to, frozen);
             }
         }
-        // Last update Last Id with the Collections Id
+        // Last update Last Id
         lastId += collectionIds.length;
         return true;
     }
 
     /**
      * @dev Internal function to mint tokens
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @param collectionId ( uint256 ) CollectionId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
@@ -577,14 +583,14 @@ contract UVCollectable is
     }
 
     /**
-     * @dev Internal function to mint tokens
-     * @param collectionId ( uint256 ) collectionId for the new token
+     * @dev Internal function to mint tokens without subscription
+     * @param collectionId ( uint256 ) CollectionId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
      * @param frozen ( bool ) true if minted token should be frozen, else false
      * @return A boolean that indicates if the operation was successful.
      */
-    function _mintToken(
+    function _mintTokenV2(
         uint256 collectionId,
         uint256 tokenId,
         address to,
@@ -778,8 +784,7 @@ contract UVCollectable is
         override(ERC721Upgradeable)
         returns (bool isOperator)
     {
-        // if Seaport Proxy Address is detected, auto-return true
-        // or if the operator is an admin user, auto-return true
+        // if Seaport Proxy Address or admin user is detected, auto-return true
         if (
             _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
             isAdmin(_operator)
@@ -788,7 +793,7 @@ contract UVCollectable is
         }
 
         // otherwise, use the default ERC721.isApprovedForAll()
-        return ERC721Upgradeable.isApprovedForAll(_owner, _operator);
+        return super.isApprovedForAll(_owner, _operator);
     }
 
     /************************************************************************************************
