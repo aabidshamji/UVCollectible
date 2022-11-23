@@ -6,6 +6,7 @@ async function main() {
     const contract = await upgrades.deployProxy(factory, [
         "CRT1",
         "Creator 1 x Ultraviolet",
+        "token.ultraviolet.club/collectables/creatorusername1/",
         ["0x9367Ee417ae552cb94f3249d0424000747877AA8"]
     ], {
         kind: 'uups',

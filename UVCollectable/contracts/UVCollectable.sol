@@ -31,14 +31,14 @@ contract UVCollectable is
      * Events
      ************************************************************************************************/
     /**
-     * @dev Emmited when token is frozen
+     * @dev Emmited when token is locked
      */
-    event Frozen(uint256 tokenId);
+    event Locked(uint256 tokenId);
 
     /**
-     * @dev Emmited when token is unfrozen by function call
+     * @dev Emmited when token is unlocked by function call
      */
-    event Unfrozen(uint256 tokenId);
+    event Unlocked(uint256 tokenId);
 
     /**
      * @dev Emmited when an admin is added
@@ -57,8 +57,8 @@ contract UVCollectable is
     // Collection Id for each token
     mapping(uint256 => uint256) private _tokenCollection;
 
-    // Frozen tokens
-    mapping(uint256 => bool) private _tokenFrozen;
+    // Locked tokens
+    mapping(uint256 => bool) private _tokenLocked;
 
     // ERC2981 Royalty Info
     struct RoyaltyInfo {
@@ -283,80 +283,89 @@ contract UVCollectable is
     }
 
     /************************************************************************************************
-     * Freeze
+     * Locked Tokens
      ************************************************************************************************/
     /**
-     * @dev Gets the token freeze status
+     * @dev Gets the token locked status
      * @param tokenId ( uint256 ) The token id to check.
-     * @return bool representing the token freeze status
+     * @return bool representing the token locked status
      */
-    function isFrozen(uint256 tokenId) public view returns (bool) {
-        return _tokenFrozen[tokenId];
+    function isLocked(uint256 tokenId) public view returns (bool) {
+        return _tokenLocked[tokenId];
     }
 
     /**
-     * @dev Modifier to make a function callable only when the toke is not frozen.
+     * @dev Modifier to make a function callable only when the toke is not locked.
      * @param tokenId ( uint256 ) The token id to check.
      */
-    modifier whenNotFrozen(uint256 tokenId) {
-        require(!this.isFrozen(tokenId), "Token is frozen");
+    modifier whenNotLocked(uint256 tokenId) {
+        require(!this.isLocked(tokenId), "Token is locked");
         _;
     }
 
     /**
      * @dev Reverts if the `tokenId` has not been minted yet.
      */
-    function _requireFrozen(uint256 tokenId) internal view virtual {
+    function _requireLocked(uint256 tokenId) internal view virtual {
         _requireMinted(tokenId);
-        require(isFrozen(tokenId), "Token is not frozen");
+        require(isLocked(tokenId), "Token is not locked");
     }
 
     /**
-     * @dev Freeze a specific ERC721 token.
+     * @dev Locks a specific ERC721 token.
+     * Requires
+     * - The sender has to be the approved opperator
+     * - The contract does not have to be paused
+     * - The token cannot already be locked
+     * @param tokenId ( uint256 ) Id of the ERC721 token to be locked.
+     */
+    function lockToken(uint256 tokenId)
+        external
+        virtual
+        whenNotPaused
+        whenNotLocked(tokenId)
+    {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId),
+            "caller is not token owner or approved"
+        );
+        _lock(tokenId);
+    }
+
+    /**
+     * @dev Unlock a specific ERC721 token.
      * Requires
      * - The msg sender to be the owner
      * - The contract does not have to be paused
-     * - The token does not have to be frozen
-     * @param tokenId ( uint256 ) Id of the ERC721 token to be frozen.
+     * - The token must be locked
+     * @param tokenId ( uint256 ) Id of the ERC721 token to be unlocked.
      */
-    function freeze(uint256 tokenId)
-        public
+    function unlockToken(uint256 tokenId)
+        external
+        virtual
         onlyOwnerOrAdmin
         whenNotPaused
-        whenNotFrozen(tokenId)
     {
-        _freeze(tokenId);
+        _requireLocked(tokenId);
+        _unlock(tokenId);
     }
 
     /**
-     * @dev Unfreeze a specific ERC721 token.
-     * Requires
-     * - The msg sender to be the owner
-     * - The contract does not have to be paused
-     * - The token must be frozen
-     * @param tokenId ( uint256 ) Id of the ERC721 token to be unfrozen.
+     * @dev Internal function to lock a specific token
+     * @param tokenId ( uint256 ) Id of the token being locked by the _msgSender
      */
-    function unfreeze(uint256 tokenId) public onlyOwnerOrAdmin whenNotPaused {
-        _requireFrozen(tokenId);
-        _unfreeze(tokenId);
+    function _lock(uint256 tokenId) internal {
+        _tokenLocked[tokenId] = true;
+        emit Locked(tokenId);
     }
 
     /**
-     * @dev Internal function to freeze a specific token
-     * @param tokenId ( uint256 ) Id of the token being frozen by the _msgSender
+     * @dev Internal function to unlock a specific token
+     * @param tokenId ( uint256 ) Id of the token being locked by the _msgSender
      */
-    function _freeze(uint256 tokenId) internal {
-        _tokenFrozen[tokenId] = true;
-        emit Frozen(tokenId);
-    }
-
-    /**
-     * @dev Internal function to freeze a specific token
-     * @param tokenId ( uint256 ) Id of the token being frozen by the _msgSender
-     */
-    function _unfreeze(uint256 tokenId) internal {
-        delete _tokenFrozen[tokenId];
-        emit Unfrozen(tokenId);
+    function _unlock(uint256 tokenId) internal {
+        delete _tokenLocked[tokenId];
+        emit Unlocked(tokenId);
     }
 
     /************************************************************************************************
@@ -451,11 +460,15 @@ contract UVCollectable is
      * Requires:
      *  - msg sender to be the contract owner
      * @param tokenId ( uint256 ) Id of the token being reclaimed
+     * @param recipient ( address ) address where the token will be sent
      */
-    function reclaimToken(uint256 tokenId) public onlyOwnerOrAdmin {
-        _requireFrozen(tokenId);
-        _unfreeze(tokenId);
-        _transfer(ownerOf(tokenId), owner(), tokenId);
+    function reclaimToken(uint256 tokenId, address recipient)
+        public
+        onlyOwnerOrAdmin
+    {
+        _requireLocked(tokenId);
+        _unlock(tokenId);
+        _transfer(ownerOf(tokenId), recipient, tokenId);
     }
 
     /************************************************************************************************
@@ -468,19 +481,19 @@ contract UVCollectable is
      * - The contract does not have to be paused
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( address ) The address that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @param locked ( bool ) true if minted token should be locked, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
     function mintToken(
         uint256 collectionId,
         address to,
-        bool frozen,
+        bool locked,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // Updates Last Id first to not overlap
         lastId += 1;
-        return _mintToken(collectionId, lastId, to, frozen, validDuration);
+        return _mintToken(collectionId, lastId, to, locked, validDuration);
     }
 
     /**
@@ -490,14 +503,14 @@ contract UVCollectable is
      * - The contract does not have to be paused
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( array of address ) The addresses that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @param locked ( bool ) true if minted token should be locked, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
     function mintCollectionToManyUsers(
         uint256 collectionId,
         address[] calldata to,
-        bool frozen,
+        bool locked,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
@@ -506,12 +519,12 @@ contract UVCollectable is
             uint64 newExpiration = uint64(block.timestamp) + validDuration;
             for (uint256 i = 0; i < to.length; ++i) {
                 tokenId = lastId + 1 + i;
-                _mintTokenV2(collectionId, tokenId, to[i], frozen);
+                _mintTokenV2(collectionId, tokenId, to[i], locked);
                 setExpiration(tokenId, newExpiration);
             }
         } else {
             for (uint256 i = 0; i < to.length; ++i) {
-                _mintTokenV2(collectionId, lastId + 1 + i, to[i], frozen);
+                _mintTokenV2(collectionId, lastId + 1 + i, to[i], locked);
             }
         }
         // Last update Last Id
@@ -526,14 +539,14 @@ contract UVCollectable is
      * - The contract does not have to be paused
      * @param collectionIds ( array uint256 ) Collection Ids to assing to user
      * @param to ( address ) The address that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @param locked ( bool ) true if minted token should be locked, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
     function mintUserToManyCollections(
         uint256[] calldata collectionIds,
         address to,
-        bool frozen,
+        bool locked,
         uint64 validDuration
     ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
         // First mint all tokens
@@ -542,12 +555,12 @@ contract UVCollectable is
             uint64 newExpiration = uint64(block.timestamp) + validDuration;
             for (uint256 i = 0; i < collectionIds.length; ++i) {
                 tokenId = lastId + 1 + i;
-                _mintTokenV2(collectionIds[i], tokenId, to, frozen);
+                _mintTokenV2(collectionIds[i], tokenId, to, locked);
                 setExpiration(tokenId, newExpiration);
             }
         } else {
             for (uint256 i = 0; i < collectionIds.length; ++i) {
-                _mintTokenV2(collectionIds[i], lastId + 1 + i, to, frozen);
+                _mintTokenV2(collectionIds[i], lastId + 1 + i, to, locked);
             }
         }
         // Last update Last Id
@@ -560,7 +573,7 @@ contract UVCollectable is
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @param locked ( bool ) true if minted token should be locked, else false
      * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
      * @return A boolean that indicates if the operation was successful.
      */
@@ -568,13 +581,13 @@ contract UVCollectable is
         uint256 collectionId,
         uint256 tokenId,
         address to,
-        bool frozen,
+        bool locked,
         uint64 validDuration
     ) internal returns (bool) {
         _mint(to, tokenId);
         _tokenCollection[tokenId] = collectionId;
-        if (frozen) {
-            freeze(tokenId);
+        if (locked) {
+            _lock(tokenId);
         }
         if (validDuration != 0) {
             _extendSubscription(tokenId, validDuration);
@@ -587,25 +600,25 @@ contract UVCollectable is
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
-     * @param frozen ( bool ) true if minted token should be frozen, else false
+     * @param locked ( bool ) true if minted token should be locked, else false
      * @return A boolean that indicates if the operation was successful.
      */
     function _mintTokenV2(
         uint256 collectionId,
         uint256 tokenId,
         address to,
-        bool frozen
+        bool locked
     ) internal returns (bool) {
         _mint(to, tokenId);
         _tokenCollection[tokenId] = collectionId;
-        if (frozen) {
-            freeze(tokenId);
+        if (locked) {
+            _lock(tokenId);
         }
         return true;
     }
 
     /**
-     * @dev Implements pause and frozen functionality.
+     * @dev Implements pause and locked functionality.
      */
     function _beforeTokenTransfer(
         address from,
@@ -615,7 +628,7 @@ contract UVCollectable is
         internal
         override(ERC721Upgradeable)
         whenNotPaused
-        whenNotFrozen(tokenId)
+        whenNotLocked(tokenId)
     {
         super._beforeTokenTransfer(from, to, tokenId);
     }
@@ -767,7 +780,7 @@ contract UVCollectable is
     function _burn(uint256 tokenId) internal virtual override {
         super._burn(tokenId);
         delete _tokenCollection[tokenId];
-        delete _tokenFrozen[tokenId];
+        delete _tokenLocked[tokenId];
         delete _expirations[tokenId];
     }
 
