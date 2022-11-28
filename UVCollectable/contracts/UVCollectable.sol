@@ -263,6 +263,20 @@ contract UVCollectable is
         return _tokenCollection[tokenId];
     }
 
+    /**
+     * @dev updates the collection id of an already minted token
+     * @param tokenId ( uint256 ) the id of the token that needs to be updated
+     * @param newCollectionId ( uint256 ) the id of the token's new collection
+     */
+    function updateTokenCollection(uint256 tokenId, uint256 newCollectionId)
+        public
+        onlyOwnerOrAdmin
+        whenNotPaused
+    {
+        _requireMinted(tokenId);
+        _tokenCollection[tokenId] = newCollectionId;
+    }
+
     /************************************************************************************************
      * Pause
      ************************************************************************************************/
