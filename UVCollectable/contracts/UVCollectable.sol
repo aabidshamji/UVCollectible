@@ -48,6 +48,8 @@ contract UVCollectable is
     /************************************************************************************************
      * Variables
      ************************************************************************************************/
+    uint16 public version = 0;
+
     // Stores the base contractURI
     string public contractURI;
 
