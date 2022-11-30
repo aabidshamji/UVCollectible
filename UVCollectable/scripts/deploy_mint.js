@@ -4,8 +4,8 @@ async function main() {
     const factory = await hre.ethers.getContractFactory("UVCollectable");
 
     const contract = await upgrades.deployProxy(factory, [
-        "CRT1",
         "Creator 1 x Ultraviolet",
+        "CRT1",
         "token.ultraviolet.club/collectables/creatorusername1/",
         ["0x9367Ee417ae552cb94f3249d0424000747877AA8"]
     ], {

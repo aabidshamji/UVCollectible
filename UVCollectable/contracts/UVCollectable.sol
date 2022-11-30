@@ -48,7 +48,14 @@ contract UVCollectable is
     /************************************************************************************************
      * Variables
      ************************************************************************************************/
-    uint16 public version = 0;
+    // Token name
+    string private _name;
+
+    // Token symbol
+    string private _symbol;
+
+    // Token version
+    uint16 public version;
 
     // Stores the base contractURI
     string public contractURI;
@@ -97,6 +104,9 @@ contract UVCollectable is
         __UUPSUpgradeable_init();
         __DefaultOperatorFilterer_init();
 
+        _name = __name;
+        _symbol = __symbol;
+        version = 0;
         updateContractURI(__contractURI);
 
         for (uint256 i = 0; i < __admins.length; ++i) {
@@ -179,6 +189,44 @@ contract UVCollectable is
     /************************************************************************************************
      * Metadata
      ************************************************************************************************/
+    /**
+     * @dev See {IERC721Metadata-name}.
+     */
+    function name() public view virtual override returns (string memory) {
+        return _name;
+    }
+
+    /**
+     * @dev See {IERC721Metadata-symbol}.
+     */
+    function symbol() public view virtual override returns (string memory) {
+        return _symbol;
+    }
+
+    /**
+     * @dev Updates the name of the contrcat see: ERC721
+     * @param newName ( string ) The new name of the contract
+     */
+    function updateName(string memory newName)
+        external
+        virtual
+        onlyOwnerOrAdmin
+    {
+        _name = newName;
+    }
+
+    /**
+     * @dev Updates the contract's symbol: ERC721
+     * @param newSymbol ( string ) The new symbol of the contract
+     */
+    function updateSymbol(string memory newSymbol)
+        external
+        virtual
+        onlyOwnerOrAdmin
+    {
+        _symbol = newSymbol;
+    }
+
     /**
      * @dev Gets URI for the token metadata
      * @param tokenId ( uint256 ) The Token Id you want to get the URI

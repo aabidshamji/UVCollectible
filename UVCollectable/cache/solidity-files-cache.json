@@ -40,8 +40,8 @@
       ]
     },
     "/Users/aabid-octi/Documents/contracts/UVCollectable/contracts/UVCollectable.sol": {
-      "lastModificationDate": 1669746267306,
-      "contentHash": "24702cd76395374890ecbe05a988eff4",
+      "lastModificationDate": 1669749428624,
+      "contentHash": "4edaaf1fc35fdb13fe2c4c4aa329d3bf",
       "sourceName": "contracts/UVCollectable.sol",
       "solcConfig": {
         "version": "0.8.12",
