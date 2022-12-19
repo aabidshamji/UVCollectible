@@ -11,8 +11,8 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721BurnableUpgradeabl
 import "@openzeppelin/contracts/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts/utils/StringsUpgradeable.sol";
 import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
+import "@opengsn/contracts/src/ERC2771Recipient.sol";
 import "./IERC5643.sol";
-import "./ERC2771Recipient.sol";
 
 /// @custom:security-contact security@ultraviolet.club
 contract UVCollectable is
