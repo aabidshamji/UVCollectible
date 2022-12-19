@@ -6,7 +6,3 @@
 	path = lib/openzeppelin-contracts-upgradeable
 	url = https://github.com/openzeppelin/openzeppelin-contracts-upgradeable
 	branch = v4.8.0
-[submodule "lib/gsn"]
-	path = lib/gsn
-	url = https://github.com/opengsn/gsn
-	branch = master
