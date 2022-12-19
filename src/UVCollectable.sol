@@ -10,8 +10,8 @@ import "@openzeppelin/contracts/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
 import "@openzeppelin/contracts/interfaces/IERC2981Upgradeable.sol";
 import "@openzeppelin/contracts/utils/StringsUpgradeable.sol";
-import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 import "@opengsn/contracts/src/ERC2771Recipient.sol";
+import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
