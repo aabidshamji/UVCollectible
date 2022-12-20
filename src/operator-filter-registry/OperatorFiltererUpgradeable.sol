@@ -3,7 +3,7 @@ pragma solidity ^0.8.12;
 
 import {IOperatorFilterRegistry} from "./IOperatorFilterRegistry.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import {ContextUpgradeable} from "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol";
 
 abstract contract OperatorFiltererUpgradeable is
     Initializable,

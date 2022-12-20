@@ -1,0 +1,747 @@
+{
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "expiration",
+          "type": "uint64"
+        }
+      ],
+      "name": "SubscriptionUpdate",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "cancelSubscription",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "expiresAt",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        }
+      ],
+      "name": "isRenewable",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "tokenId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint64",
+          "name": "duration",
+          "type": "uint64"
+        }
+      ],
+      "name": "renewSubscription",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "cancelSubscription(uint256)": "21235083",
+    "expiresAt(uint256)": "17c95709",
+    "isRenewable(uint256)": "cde317af",
+    "renewSubscription(uint256,uint64)": "776ce868"
+  },
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"expiration\",\"type\":\"uint64\"}],\"name\":\"SubscriptionUpdate\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"cancelSubscription\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"expiresAt\",\"outputs\":[{\"internalType\":\"uint64\",\"name\":\"\",\"type\":\"uint64\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"}],\"name\":\"isRenewable\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"tokenId\",\"type\":\"uint256\"},{\"internalType\":\"uint64\",\"name\":\"duration\",\"type\":\"uint64\"}],\"name\":\"renewSubscription\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"SubscriptionUpdate(uint256,uint64)\":{\"details\":\"When a subscription is canceled, the expiration value should also be 0.\"}},\"kind\":\"dev\",\"methods\":{\"cancelSubscription(uint256)\":{\"details\":\"Throws if `tokenId` is not a valid NFT\",\"params\":{\"tokenId\":\"The NFT to cancel the subscription for\"}},\"expiresAt(uint256)\":{\"details\":\"Throws if `tokenId` is not a valid NFT\",\"params\":{\"tokenId\":\"The NFT to get the expiration date of\"},\"returns\":{\"_0\":\"The expiration date of the subscription\"}},\"isRenewable(uint256)\":{\"details\":\"Throws if `tokenId` is not a valid NFT\",\"params\":{\"tokenId\":\"The NFT to get the expiration date of\"},\"returns\":{\"_0\":\"The renewability of a the subscription\"}},\"renewSubscription(uint256,uint64)\":{\"params\":{\"duration\":\"The number of seconds to extend a subscription for\",\"tokenId\":\"The NFT to renew the subscription for\"}}},\"version\":1},\"userdoc\":{\"events\":{\"SubscriptionUpdate(uint256,uint64)\":{\"notice\":\"Emitted when a subscription expiration changes\"}},\"kind\":\"user\",\"methods\":{\"cancelSubscription(uint256)\":{\"notice\":\"Cancels the subscription of an NFT\"},\"expiresAt(uint256)\":{\"notice\":\"Gets the expiration date of a subscription\"},\"isRenewable(uint256)\":{\"notice\":\"Determines whether a subscription can be renewed\"},\"renewSubscription(uint256,uint64)\":{\"notice\":\"Renews the subscription to an NFT Throws if `tokenId` is not a valid NFT\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/IERC5643.sol\":\"IERC5643\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@opengsn/=lib/gsn/packages/\",\":@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":gsn/=lib/gsn/\"]},\"sources\":{\"src/IERC5643.sol\":{\"keccak256\":\"0x4df04eba6cc426f627bc9972a49a97ce0621ef1fde910c0b46b8183cf377ce30\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://2a04297a2900d7e9ee9beaef9ed35dcffeafa684e86c6d2301e3c7c2daf0d639\",\"dweb:/ipfs/QmRxizMdmaT4TXhWK1Ri5H2tjJMU8NFFyRWh5km6acvG22\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256",
+              "indexed": true
+            },
+            {
+              "internalType": "uint64",
+              "name": "expiration",
+              "type": "uint64",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "SubscriptionUpdate",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "cancelSubscription"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "expiresAt",
+          "outputs": [
+            {
+              "internalType": "uint64",
+              "name": "",
+              "type": "uint64"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "isRenewable",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "tokenId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint64",
+              "name": "duration",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "renewSubscription"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "cancelSubscription(uint256)": {
+            "details": "Throws if `tokenId` is not a valid NFT",
+            "params": {
+              "tokenId": "The NFT to cancel the subscription for"
+            }
+          },
+          "expiresAt(uint256)": {
+            "details": "Throws if `tokenId` is not a valid NFT",
+            "params": {
+              "tokenId": "The NFT to get the expiration date of"
+            },
+            "returns": {
+              "_0": "The expiration date of the subscription"
+            }
+          },
+          "isRenewable(uint256)": {
+            "details": "Throws if `tokenId` is not a valid NFT",
+            "params": {
+              "tokenId": "The NFT to get the expiration date of"
+            },
+            "returns": {
+              "_0": "The renewability of a the subscription"
+            }
+          },
+          "renewSubscription(uint256,uint64)": {
+            "params": {
+              "duration": "The number of seconds to extend a subscription for",
+              "tokenId": "The NFT to renew the subscription for"
+            }
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "cancelSubscription(uint256)": {
+            "notice": "Cancels the subscription of an NFT"
+          },
+          "expiresAt(uint256)": {
+            "notice": "Gets the expiration date of a subscription"
+          },
+          "isRenewable(uint256)": {
+            "notice": "Determines whether a subscription can be renewed"
+          },
+          "renewSubscription(uint256,uint64)": {
+            "notice": "Renews the subscription to an NFT Throws if `tokenId` is not a valid NFT"
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@opengsn/=lib/gsn/packages/",
+        ":@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":gsn/=lib/gsn/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/IERC5643.sol": "IERC5643"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "src/IERC5643.sol": {
+        "keccak256": "0x4df04eba6cc426f627bc9972a49a97ce0621ef1fde910c0b46b8183cf377ce30",
+        "urls": [
+          "bzz-raw://2a04297a2900d7e9ee9beaef9ed35dcffeafa684e86c6d2301e3c7c2daf0d639",
+          "dweb:/ipfs/QmRxizMdmaT4TXhWK1Ri5H2tjJMU8NFFyRWh5km6acvG22"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/IERC5643.sol",
+    "id": 29356,
+    "exportedSymbols": {
+      "IERC5643": [
+        29355
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "33:1412:39",
+    "nodes": [
+      {
+        "id": 29317,
+        "nodeType": "PragmaDirective",
+        "src": "33:24:39",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".12"
+        ]
+      },
+      {
+        "id": 29355,
+        "nodeType": "ContractDefinition",
+        "src": "59:1385:39",
+        "nodes": [
+          {
+            "id": 29324,
+            "nodeType": "EventDefinition",
+            "src": "232:69:39",
+            "nodes": [],
+            "anonymous": false,
+            "documentation": {
+              "id": 29318,
+              "nodeType": "StructuredDocumentation",
+              "src": "84:143:39",
+              "text": "@notice Emitted when a subscription expiration changes\n @dev When a subscription is canceled, the expiration value should also be 0."
+            },
+            "eventSelector": "2ec2be2c4b90c2cf13ecb6751a24daed6bb741ae5ed3f7371aabf9402f6d62e8",
+            "name": "SubscriptionUpdate",
+            "nameLocation": "238:18:39",
+            "parameters": {
+              "id": 29323,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29320,
+                  "indexed": true,
+                  "mutability": "mutable",
+                  "name": "tokenId",
+                  "nameLocation": "273:7:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29324,
+                  "src": "257:23:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29319,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "257:7:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29322,
+                  "indexed": false,
+                  "mutability": "mutable",
+                  "name": "expiration",
+                  "nameLocation": "289:10:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29324,
+                  "src": "282:17:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 29321,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "282:6:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "256:44:39"
+            }
+          },
+          {
+            "id": 29332,
+            "nodeType": "FunctionDefinition",
+            "src": "540:70:39",
+            "nodes": [],
+            "documentation": {
+              "id": 29325,
+              "nodeType": "StructuredDocumentation",
+              "src": "307:228:39",
+              "text": "@notice Renews the subscription to an NFT\n Throws if `tokenId` is not a valid NFT\n @param tokenId The NFT to renew the subscription for\n @param duration The number of seconds to extend a subscription for"
+            },
+            "functionSelector": "776ce868",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "renewSubscription",
+            "nameLocation": "549:17:39",
+            "parameters": {
+              "id": 29330,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29327,
+                  "mutability": "mutable",
+                  "name": "tokenId",
+                  "nameLocation": "575:7:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29332,
+                  "src": "567:15:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29326,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "567:7:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 29329,
+                  "mutability": "mutable",
+                  "name": "duration",
+                  "nameLocation": "591:8:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29332,
+                  "src": "584:15:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 29328,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "584:6:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "566:34:39"
+            },
+            "returnParameters": {
+              "id": 29331,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "609:0:39"
+            },
+            "scope": 29355,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 29338,
+            "nodeType": "FunctionDefinition",
+            "src": "781:54:39",
+            "nodes": [],
+            "documentation": {
+              "id": 29333,
+              "nodeType": "StructuredDocumentation",
+              "src": "616:160:39",
+              "text": "@notice Cancels the subscription of an NFT\n @dev Throws if `tokenId` is not a valid NFT\n @param tokenId The NFT to cancel the subscription for"
+            },
+            "functionSelector": "21235083",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "cancelSubscription",
+            "nameLocation": "790:18:39",
+            "parameters": {
+              "id": 29336,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29335,
+                  "mutability": "mutable",
+                  "name": "tokenId",
+                  "nameLocation": "817:7:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29338,
+                  "src": "809:15:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29334,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "809:7:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "808:17:39"
+            },
+            "returnParameters": {
+              "id": 29337,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "834:0:39"
+            },
+            "scope": 29355,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 29346,
+            "nodeType": "FunctionDefinition",
+            "src": "1069:67:39",
+            "nodes": [],
+            "documentation": {
+              "id": 29339,
+              "nodeType": "StructuredDocumentation",
+              "src": "841:223:39",
+              "text": "@notice Gets the expiration date of a subscription\n @dev Throws if `tokenId` is not a valid NFT\n @param tokenId The NFT to get the expiration date of\n @return The expiration date of the subscription"
+            },
+            "functionSelector": "17c95709",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "expiresAt",
+            "nameLocation": "1078:9:39",
+            "parameters": {
+              "id": 29342,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29341,
+                  "mutability": "mutable",
+                  "name": "tokenId",
+                  "nameLocation": "1096:7:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29346,
+                  "src": "1088:15:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29340,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1088:7:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1087:17:39"
+            },
+            "returnParameters": {
+              "id": 29345,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29344,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29346,
+                  "src": "1128:6:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint64",
+                    "typeString": "uint64"
+                  },
+                  "typeName": {
+                    "id": 29343,
+                    "name": "uint64",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1128:6:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint64",
+                      "typeString": "uint64"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1127:8:39"
+            },
+            "scope": 29355,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          },
+          {
+            "id": 29354,
+            "nodeType": "FunctionDefinition",
+            "src": "1375:67:39",
+            "nodes": [],
+            "documentation": {
+              "id": 29347,
+              "nodeType": "StructuredDocumentation",
+              "src": "1142:228:39",
+              "text": "@notice Determines whether a subscription can be renewed\n @dev Throws if `tokenId` is not a valid NFT\n @param tokenId The NFT to get the expiration date of\n @return The renewability of a the subscription"
+            },
+            "functionSelector": "cde317af",
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isRenewable",
+            "nameLocation": "1384:11:39",
+            "parameters": {
+              "id": 29350,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29349,
+                  "mutability": "mutable",
+                  "name": "tokenId",
+                  "nameLocation": "1404:7:39",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29354,
+                  "src": "1396:15:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 29348,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1396:7:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1395:17:39"
+            },
+            "returnParameters": {
+              "id": 29353,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 29352,
+                  "mutability": "mutable",
+                  "name": "",
+                  "nameLocation": "-1:-1:-1",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 29354,
+                  "src": "1436:4:39",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 29351,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1436:4:39",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1435:6:39"
+            },
+            "scope": 29355,
+            "stateMutability": "view",
+            "virtual": false,
+            "visibility": "external"
+          }
+        ],
+        "abstract": false,
+        "baseContracts": [],
+        "canonicalName": "IERC5643",
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "fullyImplemented": false,
+        "linearizedBaseContracts": [
+          29355
+        ],
+        "name": "IERC5643",
+        "nameLocation": "69:8:39",
+        "scope": 29356,
+        "usedErrors": []
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 39
+}

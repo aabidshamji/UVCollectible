@@ -1,0 +1,484 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "operator",
+          "type": "address"
+        }
+      ],
+      "name": "OperatorNotAllowed",
+      "type": "error"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    }
+  ],
+  "bytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x",
+    "sourceMap": "",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {},
+  "rawMetadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"operator\",\"type\":\"address\"}],\"name\":\"OperatorNotAllowed\",\"type\":\"error\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint8\",\"name\":\"version\",\"type\":\"uint8\"}],\"name\":\"Initialized\",\"type\":\"event\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol\":\"DefaultOperatorFiltererUpgradeable\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[\":@opengsn/=lib/gsn/packages/\",\":@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/\",\":ds-test/=lib/forge-std/lib/ds-test/src/\",\":forge-std/=lib/forge-std/src/\",\":gsn/=lib/gsn/\"]},\"sources\":{\"lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol\":{\"keccak256\":\"0xe798cadb41e2da274913e4b3183a80f50fb057a42238fe8467e077268100ec27\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://899f850f7df5a270bccfb765d70069959ca1c20d3a7381c1c3bda8a3ffee1935\",\"dweb:/ipfs/QmVdnAqwyX2L3nX2HDA5WKGtVBFyH1nKE9A1k7fZnPBkhP\"]},\"lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol\":{\"keccak256\":\"0x2edcb41c121abc510932e8d83ff8b82cf9cdde35e7c297622f5c29ef0af25183\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://72460c66cd1c3b1c11b863e0d8df0a1c56f37743019e468dc312c754f43e3b06\",\"dweb:/ipfs/QmPExYKiNb9PUsgktQBupPaM33kzDHxaYoVeJdLhv8s879\"]},\"lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol\":{\"keccak256\":\"0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c\",\"dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a\"]},\"src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol\":{\"keccak256\":\"0x5d46936ddeaad0a88e802a93973f276d841aa539a844ad86ee7632f68b621300\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://0a7e824f4c3eda53d36d179d9b00dac0ba215aec6a67a7c270707272974138d4\",\"dweb:/ipfs/QmZQDUFqAyLijNKN38hxZpCdAKufMBp3x1LDAQWoELH6Kf\"]},\"src/operator-filter-registry/IOperatorFilterRegistry.sol\":{\"keccak256\":\"0x1fc805c82c11b2ae7cb4bbe18828bea6fcc1f277d12f4a01782ee0cb15821ce1\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://14717f5bfb6562677bde251119579a7808ccc1201615a34bda54be9e5239e13c\",\"dweb:/ipfs/QmW2m28ggAhrtvEPzgjupnSLd5F36iEckXoAiFom694XwV\"]},\"src/operator-filter-registry/OperatorFiltererUpgradeable.sol\":{\"keccak256\":\"0x37f49a02f948030c2cf59b37b6c44d4e2d107fd24b42c521b33a451a965abe99\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://65f6e64f853c530c39ae495f657371096ee7b32f4f6e51d687b8b82aa2698521\",\"dweb:/ipfs/QmdRk7Z1y1JHERcDAH7aGowjC6tYGrzvYu4FDQ4v9ncwMA\"]}},\"version\":1}",
+  "metadata": {
+    "compiler": {
+      "version": "0.8.17+commit.8df45f5f"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "operator",
+              "type": "address"
+            }
+          ],
+          "type": "error",
+          "name": "OperatorNotAllowed"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "Initialized",
+          "anonymous": false
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {},
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {},
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@opengsn/=lib/gsn/packages/",
+        ":@openzeppelin/contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/contracts/",
+        ":ds-test/=lib/forge-std/lib/ds-test/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":gsn/=lib/gsn/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "ipfs"
+      },
+      "compilationTarget": {
+        "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol": "DefaultOperatorFiltererUpgradeable"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol": {
+        "keccak256": "0xe798cadb41e2da274913e4b3183a80f50fb057a42238fe8467e077268100ec27",
+        "urls": [
+          "bzz-raw://899f850f7df5a270bccfb765d70069959ca1c20d3a7381c1c3bda8a3ffee1935",
+          "dweb:/ipfs/QmVdnAqwyX2L3nX2HDA5WKGtVBFyH1nKE9A1k7fZnPBkhP"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol": {
+        "keccak256": "0x2edcb41c121abc510932e8d83ff8b82cf9cdde35e7c297622f5c29ef0af25183",
+        "urls": [
+          "bzz-raw://72460c66cd1c3b1c11b863e0d8df0a1c56f37743019e468dc312c754f43e3b06",
+          "dweb:/ipfs/QmPExYKiNb9PUsgktQBupPaM33kzDHxaYoVeJdLhv8s879"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol": {
+        "keccak256": "0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149",
+        "urls": [
+          "bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c",
+          "dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a"
+        ],
+        "license": "MIT"
+      },
+      "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol": {
+        "keccak256": "0x5d46936ddeaad0a88e802a93973f276d841aa539a844ad86ee7632f68b621300",
+        "urls": [
+          "bzz-raw://0a7e824f4c3eda53d36d179d9b00dac0ba215aec6a67a7c270707272974138d4",
+          "dweb:/ipfs/QmZQDUFqAyLijNKN38hxZpCdAKufMBp3x1LDAQWoELH6Kf"
+        ],
+        "license": "MIT"
+      },
+      "src/operator-filter-registry/IOperatorFilterRegistry.sol": {
+        "keccak256": "0x1fc805c82c11b2ae7cb4bbe18828bea6fcc1f277d12f4a01782ee0cb15821ce1",
+        "urls": [
+          "bzz-raw://14717f5bfb6562677bde251119579a7808ccc1201615a34bda54be9e5239e13c",
+          "dweb:/ipfs/QmW2m28ggAhrtvEPzgjupnSLd5F36iEckXoAiFom694XwV"
+        ],
+        "license": "MIT"
+      },
+      "src/operator-filter-registry/OperatorFiltererUpgradeable.sol": {
+        "keccak256": "0x37f49a02f948030c2cf59b37b6c44d4e2d107fd24b42c521b33a451a965abe99",
+        "urls": [
+          "bzz-raw://65f6e64f853c530c39ae495f657371096ee7b32f4f6e51d687b8b82aa2698521",
+          "dweb:/ipfs/QmdRk7Z1y1JHERcDAH7aGowjC6tYGrzvYu4FDQ4v9ncwMA"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "ast": {
+    "absolutePath": "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol",
+    "id": 30941,
+    "exportedSymbols": {
+      "DefaultOperatorFiltererUpgradeable": [
+        30940
+      ],
+      "OperatorFiltererUpgradeable": [
+        31299
+      ]
+    },
+    "nodeType": "SourceUnit",
+    "src": "32:507:41",
+    "nodes": [
+      {
+        "id": 30916,
+        "nodeType": "PragmaDirective",
+        "src": "32:24:41",
+        "nodes": [],
+        "literals": [
+          "solidity",
+          "^",
+          "0.8",
+          ".12"
+        ]
+      },
+      {
+        "id": 30918,
+        "nodeType": "ImportDirective",
+        "src": "58:78:41",
+        "nodes": [],
+        "absolutePath": "src/operator-filter-registry/OperatorFiltererUpgradeable.sol",
+        "file": "./OperatorFiltererUpgradeable.sol",
+        "nameLocation": "-1:-1:-1",
+        "scope": 30941,
+        "sourceUnit": 31300,
+        "symbolAliases": [
+          {
+            "foreign": {
+              "id": 30917,
+              "name": "OperatorFiltererUpgradeable",
+              "nodeType": "Identifier",
+              "overloadedDeclarations": [],
+              "referencedDeclaration": 31299,
+              "src": "66:27:41",
+              "typeDescriptions": {}
+            },
+            "nameLocation": "-1:-1:-1"
+          }
+        ],
+        "unitAlias": ""
+      },
+      {
+        "id": 30940,
+        "nodeType": "ContractDefinition",
+        "src": "138:400:41",
+        "nodes": [
+          {
+            "id": 30926,
+            "nodeType": "VariableDeclaration",
+            "src": "232:99:41",
+            "nodes": [],
+            "constant": true,
+            "mutability": "constant",
+            "name": "DEFAULT_SUBSCRIPTION",
+            "nameLocation": "249:20:41",
+            "scope": 30940,
+            "stateVariable": true,
+            "storageLocation": "default",
+            "typeDescriptions": {
+              "typeIdentifier": "t_address",
+              "typeString": "address"
+            },
+            "typeName": {
+              "id": 30921,
+              "name": "address",
+              "nodeType": "ElementaryTypeName",
+              "src": "232:7:41",
+              "stateMutability": "nonpayable",
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "value": {
+              "arguments": [
+                {
+                  "hexValue": "307833636336436464413736306237396241666130386446343145434641323234663831306443654236",
+                  "id": 30924,
+                  "isConstant": false,
+                  "isLValue": false,
+                  "isPure": true,
+                  "kind": "number",
+                  "lValueRequested": false,
+                  "nodeType": "Literal",
+                  "src": "288:42:41",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "value": "0x3cc6CddA760b79bAfa08dF41ECFA224f810dCeB6"
+                }
+              ],
+              "expression": {
+                "argumentTypes": [
+                  {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  }
+                ],
+                "id": 30923,
+                "isConstant": false,
+                "isLValue": false,
+                "isPure": true,
+                "lValueRequested": false,
+                "nodeType": "ElementaryTypeNameExpression",
+                "src": "280:7:41",
+                "typeDescriptions": {
+                  "typeIdentifier": "t_type$_t_address_$",
+                  "typeString": "type(address)"
+                },
+                "typeName": {
+                  "id": 30922,
+                  "name": "address",
+                  "nodeType": "ElementaryTypeName",
+                  "src": "280:7:41",
+                  "typeDescriptions": {}
+                }
+              },
+              "id": 30925,
+              "isConstant": false,
+              "isLValue": false,
+              "isPure": true,
+              "kind": "typeConversion",
+              "lValueRequested": false,
+              "nameLocations": [],
+              "names": [],
+              "nodeType": "FunctionCall",
+              "src": "280:51:41",
+              "tryCall": false,
+              "typeDescriptions": {
+                "typeIdentifier": "t_address",
+                "typeString": "address"
+              }
+            },
+            "visibility": "internal"
+          },
+          {
+            "id": 30939,
+            "nodeType": "FunctionDefinition",
+            "src": "338:198:41",
+            "nodes": [],
+            "body": {
+              "id": 30938,
+              "nodeType": "Block",
+              "src": "406:130:41",
+              "nodes": [],
+              "statements": [
+                {
+                  "expression": {
+                    "arguments": [
+                      {
+                        "id": 30934,
+                        "name": "DEFAULT_SUBSCRIPTION",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 30926,
+                        "src": "481:20:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        }
+                      },
+                      {
+                        "hexValue": "74727565",
+                        "id": 30935,
+                        "isConstant": false,
+                        "isLValue": false,
+                        "isPure": true,
+                        "kind": "bool",
+                        "lValueRequested": false,
+                        "nodeType": "Literal",
+                        "src": "515:4:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        },
+                        "value": "true"
+                      }
+                    ],
+                    "expression": {
+                      "argumentTypes": [
+                        {
+                          "typeIdentifier": "t_address",
+                          "typeString": "address"
+                        },
+                        {
+                          "typeIdentifier": "t_bool",
+                          "typeString": "bool"
+                        }
+                      ],
+                      "expression": {
+                        "id": 30931,
+                        "name": "OperatorFiltererUpgradeable",
+                        "nodeType": "Identifier",
+                        "overloadedDeclarations": [],
+                        "referencedDeclaration": 31299,
+                        "src": "416:27:41",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_type$_t_contract$_OperatorFiltererUpgradeable_$31299_$",
+                          "typeString": "type(contract OperatorFiltererUpgradeable)"
+                        }
+                      },
+                      "id": 30933,
+                      "isConstant": false,
+                      "isLValue": false,
+                      "isPure": false,
+                      "lValueRequested": false,
+                      "memberLocation": "444:23:41",
+                      "memberName": "__OperatorFilterer_init",
+                      "nodeType": "MemberAccess",
+                      "referencedDeclaration": 31226,
+                      "src": "416:51:41",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_function_internal_nonpayable$_t_address_$_t_bool_$returns$__$",
+                        "typeString": "function (address,bool)"
+                      }
+                    },
+                    "id": 30936,
+                    "isConstant": false,
+                    "isLValue": false,
+                    "isPure": false,
+                    "kind": "functionCall",
+                    "lValueRequested": false,
+                    "nameLocations": [],
+                    "names": [],
+                    "nodeType": "FunctionCall",
+                    "src": "416:113:41",
+                    "tryCall": false,
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_tuple$__$",
+                      "typeString": "tuple()"
+                    }
+                  },
+                  "id": 30937,
+                  "nodeType": "ExpressionStatement",
+                  "src": "416:113:41"
+                }
+              ]
+            },
+            "implemented": true,
+            "kind": "function",
+            "modifiers": [
+              {
+                "id": 30929,
+                "kind": "modifierInvocation",
+                "modifierName": {
+                  "id": 30928,
+                  "name": "onlyInitializing",
+                  "nameLocations": [
+                    "389:16:41"
+                  ],
+                  "nodeType": "IdentifierPath",
+                  "referencedDeclaration": 26293,
+                  "src": "389:16:41"
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "389:16:41"
+              }
+            ],
+            "name": "__DefaultOperatorFilterer_init",
+            "nameLocation": "347:30:41",
+            "parameters": {
+              "id": 30927,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "377:2:41"
+            },
+            "returnParameters": {
+              "id": 30930,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "406:0:41"
+            },
+            "scope": 30940,
+            "stateMutability": "nonpayable",
+            "virtual": false,
+            "visibility": "internal"
+          }
+        ],
+        "abstract": true,
+        "baseContracts": [
+          {
+            "baseName": {
+              "id": 30919,
+              "name": "OperatorFiltererUpgradeable",
+              "nameLocations": [
+                "198:27:41"
+              ],
+              "nodeType": "IdentifierPath",
+              "referencedDeclaration": 31299,
+              "src": "198:27:41"
+            },
+            "id": 30920,
+            "nodeType": "InheritanceSpecifier",
+            "src": "198:27:41"
+          }
+        ],
+        "canonicalName": "DefaultOperatorFiltererUpgradeable",
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "fullyImplemented": true,
+        "linearizedBaseContracts": [
+          30940,
+          31299,
+          28118,
+          26348
+        ],
+        "name": "DefaultOperatorFiltererUpgradeable",
+        "nameLocation": "156:34:41",
+        "scope": 30941,
+        "usedErrors": [
+          31148
+        ]
+      }
+    ],
+    "license": "MIT"
+  },
+  "id": 41
+}

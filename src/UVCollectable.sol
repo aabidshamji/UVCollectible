@@ -130,7 +130,7 @@ contract UVCollectable is
         internal
         view
         override(ContextUpgradeable, ERC2771Recipient)
-        returns (bytes memory)
+        returns (bytes calldata)
     {
         return ERC2771Recipient._msgData();
     }
@@ -687,14 +687,15 @@ contract UVCollectable is
     function _beforeTokenTransfer(
         address from,
         address to,
-        uint256 tokenId
+        uint256 tokenId,
+        uint256 batchSize
     )
         internal
         override(ERC721Upgradeable)
         whenNotPaused
         whenNotLocked(tokenId)
     {
-        super._beforeTokenTransfer(from, to, tokenId);
+        super._beforeTokenTransfer(from, to, tokenId, batchSize);
     }
 
     /************************************************************************************************
