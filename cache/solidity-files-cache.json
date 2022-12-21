@@ -1744,10 +1744,10 @@
         }
       }
     },
-    "src/UVCollectable.sol": {
-      "lastModificationDate": 1671496315968,
-      "contentHash": "16125b464bd6fbd885a4d94d12ca60c7",
-      "sourceName": "src/UVCollectable.sol",
+    "src/UVCollectible.sol": {
+      "lastModificationDate": 1671501632956,
+      "contentHash": "3ca02a2fb0cc362ba755127543699c7d",
+      "sourceName": "src/UVCollectible.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -1806,8 +1806,8 @@
       ],
       "versionRequirement": "^0.8.12",
       "artifacts": {
-        "UVCollectable": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectable.sol/UVCollectable.json"
+        "UVCollectible": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectible.sol/UVCollectible.json"
         }
       }
     },
@@ -1995,6 +1995,91 @@
       "artifacts": {
         "CounterTest": {
           "0.8.17+commit.8df45f5f.Darwin.appleclang": "Counter.t.sol/CounterTest.json"
+        }
+      }
+    },
+    "test/UVCollectible.t.sol": {
+      "lastModificationDate": 1671584861888,
+      "contentHash": "e29eaa66d6ca7b14cc29ebc70dec477a",
+      "sourceName": "test/UVCollectible.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/gsn/packages/contracts/src/ERC2771Recipient.sol",
+        "lib/gsn/packages/contracts/src/interfaces/IERC2771Recipient.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/IERC2981Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/draft-IERC1822Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/beacon/IBeaconUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/security/PausableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/IERC721ReceiverUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/IERC721Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/extensions/ERC721BurnableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/extensions/IERC721MetadataUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/StorageSlotUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/StringsUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/introspection/ERC165Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/introspection/IERC165Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/math/MathUpgradeable.sol",
+        "src/IERC5643.sol",
+        "src/UVCollectible.sol",
+        "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol",
+        "src/operator-filter-registry/IOperatorFilterRegistry.sol",
+        "src/operator-filter-registry/OperatorFiltererUpgradeable.sol"
+      ],
+      "versionRequirement": "^0.8.13",
+      "artifacts": {
+        "CheatCodes": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectible.t.sol/CheatCodes.json"
+        },
+        "UVCollectableTest": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectible.t.sol/UVCollectableTest.json"
         }
       }
     }

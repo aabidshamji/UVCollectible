@@ -15,7 +15,7 @@ import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
-contract UVCollectable is
+contract UVCollectible is
     Initializable,
     ERC721Upgradeable,
     IERC2981Upgradeable,
@@ -95,7 +95,7 @@ contract UVCollectable is
         string memory __name,
         string memory __symbol,
         string memory __contractURI,
-        address[] calldata __admins
+        address __admin
     ) public initializer {
         __ERC721_init(__name, __symbol);
         __Pausable_init();
@@ -108,10 +108,7 @@ contract UVCollectable is
         _symbol = __symbol;
         version = 0;
         updateContractURI(__contractURI);
-
-        for (uint256 i = 0; i < __admins.length; ++i) {
-            addAdmin(__admins[i]);
-        }
+        addAdmin(__admin);
     }
 
     /************************************************************************************************
