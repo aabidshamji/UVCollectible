@@ -10,7 +10,7 @@ interface CheatCodes {
     function addr(uint256) external returns (address);
 }
 
-contract ProxyTest is Test {
+contract BaseSetup is Test {
     UVCollectible public logic;
     ERC1967Proxy public proxy;
     UVCollectible public proxied;
@@ -20,6 +20,8 @@ contract ProxyTest is Test {
     address public user;
 
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
+
+    error Unauthorized();
 
     function setUp() public {
         owner = address(this);
@@ -34,6 +36,11 @@ contract ProxyTest is Test {
         // (3) To be able to call functions from the logic contract, we need to
         //     cast the proxy to the right type
         proxied = UVCollectible(address(proxy));
-        proxied.initialize("UVCollectible", "", "", address(uvadmin));
+        proxied.initialize(
+            "UVCollectible",
+            "UVC",
+            "token.ultraviolet.club",
+            address(uvadmin)
+        );
     }
 }

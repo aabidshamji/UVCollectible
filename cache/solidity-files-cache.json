@@ -1956,46 +1956,6 @@
         }
       }
     },
-    "src/Counter.sol": {
-      "lastModificationDate": 1671477501276,
-      "contentHash": "ae6c800a2b4c57768024d6e9423d39e8",
-      "sourceName": "src/Counter.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": "^0.8.13",
-      "artifacts": {
-        "Counter": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "Counter.sol/Counter.json"
-        }
-      }
-    },
     "src/IERC5643.sol": {
       "lastModificationDate": 1670957257145,
       "contentHash": "3a718ea1e72ea83ae7d9adcbf8342f9a",
@@ -2234,66 +2194,10 @@
         }
       }
     },
-    "test/Counter.t.sol": {
-      "lastModificationDate": 1671477501276,
-      "contentHash": "b1a6521ba9c61d5266bab1fc9a057d68",
-      "sourceName": "test/Counter.t.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [
-        "lib/forge-std/lib/ds-test/src/test.sol",
-        "lib/forge-std/src/Base.sol",
-        "lib/forge-std/src/StdAssertions.sol",
-        "lib/forge-std/src/StdChains.sol",
-        "lib/forge-std/src/StdCheats.sol",
-        "lib/forge-std/src/StdError.sol",
-        "lib/forge-std/src/StdJson.sol",
-        "lib/forge-std/src/StdMath.sol",
-        "lib/forge-std/src/StdStorage.sol",
-        "lib/forge-std/src/StdUtils.sol",
-        "lib/forge-std/src/Test.sol",
-        "lib/forge-std/src/Vm.sol",
-        "lib/forge-std/src/console.sol",
-        "lib/forge-std/src/console2.sol",
-        "src/Counter.sol"
-      ],
-      "versionRequirement": "^0.8.13",
-      "artifacts": {
-        "CounterTest": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "Counter.t.sol/CounterTest.json"
-        }
-      }
-    },
-    "test/ProxyTest.t.sol": {
-      "lastModificationDate": 1671832510858,
-      "contentHash": "93c345e726be028e3681ddd04cdfb2f7",
-      "sourceName": "test/ProxyTest.t.sol",
+    "test/BaseSetup.sol": {
+      "lastModificationDate": 1671834987751,
+      "contentHash": "675d2d40fd52c013954a9266cedba925",
+      "sourceName": "test/BaseSetup.sol",
       "solcConfig": {
         "settings": {
           "optimizer": {
@@ -2374,17 +2278,17 @@
       ],
       "versionRequirement": "^0.8.13",
       "artifacts": {
-        "CheatCodes": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ProxyTest.t.sol/CheatCodes.json"
+        "BaseSetup": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "BaseSetup.sol/BaseSetup.json"
         },
-        "ProxyTest": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ProxyTest.t.sol/ProxyTest.json"
+        "CheatCodes": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "BaseSetup.sol/CheatCodes.json"
         }
       }
     },
     "test/UVCollectible.t.sol": {
-      "lastModificationDate": 1671832526789,
-      "contentHash": "fe09a2d71c128995afa84c6aa0dae8f9",
+      "lastModificationDate": 1671835019486,
+      "contentHash": "4220f7ed60c8839ef4d670503fd7187c",
       "sourceName": "test/UVCollectible.t.sol",
       "solcConfig": {
         "settings": {
@@ -2463,7 +2367,7 @@
         "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol",
         "src/operator-filter-registry/IOperatorFilterRegistry.sol",
         "src/operator-filter-registry/OperatorFiltererUpgradeable.sol",
-        "test/ProxyTest.t.sol"
+        "test/BaseSetup.sol"
       ],
       "versionRequirement": "^0.8.13",
       "artifacts": {
