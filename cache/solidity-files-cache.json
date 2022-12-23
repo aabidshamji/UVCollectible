@@ -750,6 +750,298 @@
         }
       }
     },
+    "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol": {
+      "lastModificationDate": 1671830904108,
+      "contentHash": "2858d98e74e67987ec81b39605230b74",
+      "sourceName": "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IERC1822Proxiable": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "draft-IERC1822.sol/IERC1822Proxiable.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol": {
+      "lastModificationDate": 1671830904117,
+      "contentHash": "3fc3c7c0a2956f36e766691bb9473b06",
+      "sourceName": "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol"
+      ],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "ERC1967Proxy": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ERC1967Proxy.sol/ERC1967Proxy.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol": {
+      "lastModificationDate": 1671830904117,
+      "contentHash": "6baa887a798e95b14f34e093f117e9b2",
+      "sourceName": "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol"
+      ],
+      "versionRequirement": "^0.8.2",
+      "artifacts": {
+        "ERC1967Upgrade": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ERC1967Upgrade.sol/ERC1967Upgrade.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol": {
+      "lastModificationDate": 1671830904117,
+      "contentHash": "40b3d81a836d50ff47e03893dcaaf204",
+      "sourceName": "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "Proxy": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "Proxy.sol/Proxy.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol": {
+      "lastModificationDate": 1671830904118,
+      "contentHash": "b6bd23bf19e90b771337037706470933",
+      "sourceName": "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "IBeacon": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "IBeacon.sol/IBeacon.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/Address.sol": {
+      "lastModificationDate": 1671830905754,
+      "contentHash": "f31ad6fc4bbf9c06203987220156a6ba",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.1",
+      "artifacts": {
+        "Address": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "Address.sol/Address.json"
+        }
+      }
+    },
+    "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol": {
+      "lastModificationDate": 1671830904126,
+      "contentHash": "f993f8f50186952a59ee5e3a30b68222",
+      "sourceName": "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [],
+      "versionRequirement": "^0.8.0",
+      "artifacts": {
+        "StorageSlot": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "StorageSlot.sol/StorageSlot.json"
+        }
+      }
+    },
     "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol": {
       "lastModificationDate": 1671477714778,
       "contentHash": "403ce8273abde646bff81558ddf512ad",
@@ -1998,9 +2290,101 @@
         }
       }
     },
+    "test/ProxyTest.t.sol": {
+      "lastModificationDate": 1671832510858,
+      "contentHash": "93c345e726be028e3681ddd04cdfb2f7",
+      "sourceName": "test/ProxyTest.t.sol",
+      "solcConfig": {
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "metadata": {
+            "bytecodeHash": "ipfs",
+            "appendCBOR": true
+          },
+          "outputSelection": {
+            "*": {
+              "": [
+                "ast"
+              ],
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ]
+            }
+          },
+          "evmVersion": "london",
+          "libraries": {}
+        }
+      },
+      "imports": [
+        "lib/forge-std/lib/ds-test/src/test.sol",
+        "lib/forge-std/src/Base.sol",
+        "lib/forge-std/src/StdAssertions.sol",
+        "lib/forge-std/src/StdChains.sol",
+        "lib/forge-std/src/StdCheats.sol",
+        "lib/forge-std/src/StdError.sol",
+        "lib/forge-std/src/StdJson.sol",
+        "lib/forge-std/src/StdMath.sol",
+        "lib/forge-std/src/StdStorage.sol",
+        "lib/forge-std/src/StdUtils.sol",
+        "lib/forge-std/src/Test.sol",
+        "lib/forge-std/src/Vm.sol",
+        "lib/forge-std/src/console.sol",
+        "lib/forge-std/src/console2.sol",
+        "lib/gsn/packages/contracts/src/ERC2771Recipient.sol",
+        "lib/gsn/packages/contracts/src/interfaces/IERC2771Recipient.sol",
+        "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/IERC2981Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/draft-IERC1822Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/ERC1967/ERC1967UpgradeUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/beacon/IBeaconUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/UUPSUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/security/PausableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/ERC721Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/IERC721ReceiverUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/IERC721Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/extensions/ERC721BurnableUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC721/extensions/IERC721MetadataUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/StorageSlotUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/StringsUpgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/introspection/ERC165Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/introspection/IERC165Upgradeable.sol",
+        "lib/openzeppelin-contracts-upgradeable/contracts/utils/math/MathUpgradeable.sol",
+        "src/IERC5643.sol",
+        "src/UVCollectible.sol",
+        "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol",
+        "src/operator-filter-registry/IOperatorFilterRegistry.sol",
+        "src/operator-filter-registry/OperatorFiltererUpgradeable.sol"
+      ],
+      "versionRequirement": "^0.8.13",
+      "artifacts": {
+        "CheatCodes": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ProxyTest.t.sol/CheatCodes.json"
+        },
+        "ProxyTest": {
+          "0.8.17+commit.8df45f5f.Darwin.appleclang": "ProxyTest.t.sol/ProxyTest.json"
+        }
+      }
+    },
     "test/UVCollectible.t.sol": {
-      "lastModificationDate": 1671584861888,
-      "contentHash": "e29eaa66d6ca7b14cc29ebc70dec477a",
+      "lastModificationDate": 1671832526789,
+      "contentHash": "fe09a2d71c128995afa84c6aa0dae8f9",
       "sourceName": "test/UVCollectible.t.sol",
       "solcConfig": {
         "settings": {
@@ -2047,6 +2431,13 @@
         "lib/forge-std/src/console2.sol",
         "lib/gsn/packages/contracts/src/ERC2771Recipient.sol",
         "lib/gsn/packages/contracts/src/interfaces/IERC2771Recipient.sol",
+        "lib/openzeppelin-contracts/contracts/interfaces/draft-IERC1822.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Proxy.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/ERC1967/ERC1967Upgrade.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/Proxy.sol",
+        "lib/openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol",
+        "lib/openzeppelin-contracts/contracts/utils/Address.sol",
+        "lib/openzeppelin-contracts/contracts/utils/StorageSlot.sol",
         "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol",
         "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/IERC2981Upgradeable.sol",
         "lib/openzeppelin-contracts-upgradeable/contracts/interfaces/draft-IERC1822Upgradeable.sol",
@@ -2071,55 +2462,13 @@
         "src/UVCollectible.sol",
         "src/operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol",
         "src/operator-filter-registry/IOperatorFilterRegistry.sol",
-        "src/operator-filter-registry/OperatorFiltererUpgradeable.sol"
+        "src/operator-filter-registry/OperatorFiltererUpgradeable.sol",
+        "test/ProxyTest.t.sol"
       ],
       "versionRequirement": "^0.8.13",
       "artifacts": {
-        "CheatCodes": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectible.t.sol/CheatCodes.json"
-        },
         "UVCollectableTest": {
           "0.8.17+commit.8df45f5f.Darwin.appleclang": "UVCollectible.t.sol/UVCollectableTest.json"
-        }
-      }
-    },
-    "test/utils/TestImplementation.sol": {
-      "lastModificationDate": 1671827141689,
-      "contentHash": "2f85b85a4d51f18dd236b8cfc182c50a",
-      "sourceName": "test/utils/TestImplementation.sol",
-      "solcConfig": {
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "metadata": {
-            "bytecodeHash": "ipfs",
-            "appendCBOR": true
-          },
-          "outputSelection": {
-            "*": {
-              "": [
-                "ast"
-              ],
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ]
-            }
-          },
-          "evmVersion": "london",
-          "libraries": {}
-        }
-      },
-      "imports": [],
-      "versionRequirement": ">=0.8.0",
-      "artifacts": {
-        "TestImplementation": {
-          "0.8.17+commit.8df45f5f.Darwin.appleclang": "TestImplementation.sol/TestImplementation.json"
         }
       }
     }
