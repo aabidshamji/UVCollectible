@@ -2287,8 +2287,8 @@
       }
     },
     "test/UVCollectible.t.sol": {
-      "lastModificationDate": 1671835019486,
-      "contentHash": "4220f7ed60c8839ef4d670503fd7187c",
+      "lastModificationDate": 1672731678007,
+      "contentHash": "1ef20f72e4ef644fe08d062173d33894",
       "sourceName": "test/UVCollectible.t.sol",
       "solcConfig": {
         "settings": {
