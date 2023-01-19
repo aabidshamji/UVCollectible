@@ -354,11 +354,13 @@ contract UVCollectible is
     }
 
     /**
-     * @dev Reverts if the `tokenId` has not been minted yet.
+     * @dev Modifier to make a function callable only when the toke is locked.
+     * @param tokenId ( uint256 ) The token id to check.
      */
-    function _requireLocked(uint256 tokenId) internal view {
+    modifier whenLocked(uint256 tokenId) {
         _requireMinted(tokenId);
         require(isLocked(tokenId), "Token is not locked");
+        _;
     }
 
     /**
@@ -393,8 +395,8 @@ contract UVCollectible is
         external
         onlyOwnerOrAdmin
         whenNotPaused
+        whenLocked(tokenId)
     {
-        _requireLocked(tokenId);
         _unlock(tokenId);
     }
 
@@ -493,22 +495,26 @@ contract UVCollectible is
     }
 
     /************************************************************************************************
-     * Reclaim
+     * Reclaim / Transfer Locked
      ************************************************************************************************/
     /**
-     * @dev Reclaim a token from a user to the recipient's wallet
+     * @dev Transfer a locked token from a token owner to the recipient's wallet
      * Requires:
-     *  - msg sender to be the contract owner
+     *  - msg sender to be the contract owner or admin
      * @param tokenId ( uint256 ) Id of the token being reclaimed
      * @param recipient ( address ) address where the token will be sent
+     * @param remainLocked ( bool ) true if the token remains locked after transfer, else false
      */
-    function reclaimToken(uint256 tokenId, address recipient)
-        public
-        onlyOwnerOrAdmin
-    {
-        _requireLocked(tokenId);
+    function transferLockedToken(
+        uint256 tokenId,
+        address recipient,
+        bool remainLocked
+    ) public whenLocked(tokenId) onlyOwnerOrAdmin {
         _unlock(tokenId);
         _transfer(ownerOf(tokenId), recipient, tokenId);
+        if (remainLocked) {
+            _lock(tokenId);
+        }
     }
 
     /************************************************************************************************
@@ -755,7 +761,16 @@ contract UVCollectible is
     /**
      * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
      */
-    function _burn(uint256 tokenId) internal override {
+    function burnLocked(uint256 tokenId)
+        external
+        onlyOwnerOrAdmin
+        whenLocked(tokenId)
+    {
+        _unlock(tokenId);
+        _burn(tokenId);
+    }
+
+    function _burn(uint256 tokenId) internal override whenNotLocked(tokenId) {
         super._burn(tokenId);
         delete _tokenCollection[tokenId];
         delete _tokenLocked[tokenId];
@@ -776,10 +791,7 @@ contract UVCollectible is
         returns (bool isOperator)
     {
         // if Seaport Proxy Address or admin user is detected, auto-return true
-        if (
-            _operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581) ||
-            isAdmin(_operator)
-        ) {
+        if (_operator == address(0x00000000006c3852cbEf3e08E8dF289169EdE581)) {
             return true;
         }
 

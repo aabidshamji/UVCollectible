@@ -12,8 +12,10 @@ contract MintTest is BaseSetup {
         uint256 newTokenId = proxied.lastId() + 1;
 
         vm.startPrank(uvadmin);
-        proxied.mintToken(collectionId, user, false);
+        uint256 returnedTokenId = proxied.mintToken(collectionId, user, false);
         vm.stopPrank();
+
+        assertEq(newTokenId, returnedTokenId);
 
         address newOwner = proxied.ownerOf(newTokenId);
         assertEq(newOwner, user);

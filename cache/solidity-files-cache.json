@@ -1997,8 +1997,8 @@
       }
     },
     "src/UVCollectible.sol": {
-      "lastModificationDate": 1674090027123,
-      "contentHash": "36229922e36c44425410d07534677446",
+      "lastModificationDate": 1674097084199,
+      "contentHash": "bde63aa1de1044923da34e9836b76bf7",
       "sourceName": "src/UVCollectible.sol",
       "solcConfig": {
         "settings": {
@@ -2377,8 +2377,8 @@
       }
     },
     "test/Burn.t.sol": {
-      "lastModificationDate": 1674090887874,
-      "contentHash": "f555398e45459155498a0d72b7de6b4d",
+      "lastModificationDate": 1674097249750,
+      "contentHash": "1961d99a33a87d1dc31bf11fcc379532",
       "sourceName": "test/Burn.t.sol",
       "solcConfig": {
         "settings": {
@@ -2737,8 +2737,8 @@
       }
     },
     "test/Mint.t.sol": {
-      "lastModificationDate": 1674090795089,
-      "contentHash": "8af9639d850ba739ffda89147745f73c",
+      "lastModificationDate": 1674092196350,
+      "contentHash": "e93b8e5ef11f21210b0716f4e66a1da1",
       "sourceName": "test/Mint.t.sol",
       "solcConfig": {
         "settings": {
