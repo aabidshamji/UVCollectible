@@ -16,6 +16,9 @@ contract BurnTest is BaseSetup {
         vm.expectRevert("ERC721: invalid token ID");
         proxied.ownerOf(newTokenId);
         // test that we are clearning all the correct fields
+        vm.expectRevert("ERC721: invalid token ID");
+        proxied.tokenCollection(newTokenId);
+        proxied.isLocked(newTokenId);
     }
 
     // Different user burn
