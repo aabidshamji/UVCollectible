@@ -6,7 +6,7 @@ import "./BaseSetup.sol";
 import "../src/UVCollectible.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-contract UVCollectableTest is BaseSetup {
+contract AdminTest is BaseSetup {
     function testName() public {
         assertEq(proxied.name(), "UVCollectible");
         vm.startPrank(uvadmin);
@@ -33,33 +33,5 @@ contract UVCollectableTest is BaseSetup {
         vm.startPrank(user);
         proxied.updateSymbol("UVC");
         vm.stopPrank();
-    }
-
-    function testMint() public {
-        uint256 collectionId = 5;
-        uint256 newTokenId = proxied.lastId() + 1;
-
-        vm.startPrank(uvadmin);
-        proxied.mintToken(collectionId, user, false, 0);
-        vm.stopPrank();
-
-        address newOwner = proxied.ownerOf(newTokenId);
-        assertEq(newOwner, user);
-
-        uint256 newTokenCollection = proxied.tokenCollection(newTokenId);
-        assertEq(newTokenCollection, collectionId);
-
-        string memory newTokenURI = proxied.tokenURI(newTokenId);
-        string memory contractURI = proxied.contractURI();
-
-        string memory correctURI = string(
-            abi.encodePacked(
-                contractURI,
-                StringsUpgradeable.toString(collectionId),
-                "/",
-                StringsUpgradeable.toString(newTokenId)
-            )
-        );
-        assertEq(newTokenURI, correctURI);
     }
 }

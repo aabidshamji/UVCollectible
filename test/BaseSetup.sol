@@ -18,6 +18,8 @@ contract BaseSetup is Test {
     address public owner;
     address public uvadmin;
     address public user;
+    address public user1;
+    address public user2;
 
     CheatCodes cheats = CheatCodes(HEVM_ADDRESS);
 
@@ -27,6 +29,8 @@ contract BaseSetup is Test {
         owner = address(this);
         uvadmin = cheats.addr(1);
         user = cheats.addr(2);
+        user1 = cheats.addr(3);
+        user2 = cheats.addr(4);
         // (1) Create logic contract
         logic = new UVCollectible();
 

@@ -17,7 +17,6 @@ import "./IERC5643.sol";
 /// @custom:security-contact security@ultraviolet.club
 contract UVCollectible is
     Initializable,
-    ERC721Upgradeable,
     IERC2981Upgradeable,
     ERC721BurnableUpgradeable,
     PausableUpgradeable,
@@ -55,7 +54,7 @@ contract UVCollectible is
     string private _symbol;
 
     // Token version
-    uint16 public version;
+    uint256 public version;
 
     // Stores the base contractURI
     string public contractURI;
@@ -107,7 +106,7 @@ contract UVCollectible is
         _name = __name;
         _symbol = __symbol;
         version = 0;
-        updateContractURI(__contractURI);
+        contractURI = __contractURI;
         addAdmin(__admin);
     }
 
@@ -168,7 +167,7 @@ contract UVCollectible is
      * @dev Revokes admin user privilages to admin.
      * @param admin ( address )
      */
-    function removeAdmin(address admin) external virtual onlyOwnerOrAdmin {
+    function removeAdmin(address admin) external onlyOwnerOrAdmin {
         delete _admins[admin];
         emit AdminUpdated(admin, false);
     }
@@ -189,14 +188,14 @@ contract UVCollectible is
     /**
      * @dev See {IERC721Metadata-name}.
      */
-    function name() public view virtual override returns (string memory) {
+    function name() public view override returns (string memory) {
         return _name;
     }
 
     /**
      * @dev See {IERC721Metadata-symbol}.
      */
-    function symbol() public view virtual override returns (string memory) {
+    function symbol() public view override returns (string memory) {
         return _symbol;
     }
 
@@ -204,11 +203,7 @@ contract UVCollectible is
      * @dev Updates the name of the contrcat see: ERC721
      * @param newName ( string ) The new name of the contract
      */
-    function updateName(string memory newName)
-        external
-        virtual
-        onlyOwnerOrAdmin
-    {
+    function updateName(string calldata newName) external onlyOwnerOrAdmin {
         _name = newName;
     }
 
@@ -216,11 +211,7 @@ contract UVCollectible is
      * @dev Updates the contract's symbol: ERC721
      * @param newSymbol ( string ) The new symbol of the contract
      */
-    function updateSymbol(string memory newSymbol)
-        external
-        virtual
-        onlyOwnerOrAdmin
-    {
+    function updateSymbol(string calldata newSymbol) external onlyOwnerOrAdmin {
         _symbol = newSymbol;
     }
 
@@ -232,7 +223,6 @@ contract UVCollectible is
     function tokenURI(uint256 tokenId)
         public
         view
-        virtual
         override
         returns (string memory)
     {
@@ -257,7 +247,6 @@ contract UVCollectible is
     function collectionURI(uint256 collectionId)
         public
         view
-        virtual
         returns (string memory)
     {
         return
@@ -360,14 +349,14 @@ contract UVCollectible is
      * @param tokenId ( uint256 ) The token id to check.
      */
     modifier whenNotLocked(uint256 tokenId) {
-        require(!this.isLocked(tokenId), "Token is locked");
+        require(!isLocked(tokenId), "Token is locked");
         _;
     }
 
     /**
      * @dev Reverts if the `tokenId` has not been minted yet.
      */
-    function _requireLocked(uint256 tokenId) internal view virtual {
+    function _requireLocked(uint256 tokenId) internal view {
         _requireMinted(tokenId);
         require(isLocked(tokenId), "Token is not locked");
     }
@@ -382,7 +371,6 @@ contract UVCollectible is
      */
     function lockToken(uint256 tokenId)
         external
-        virtual
         whenNotPaused
         whenNotLocked(tokenId)
     {
@@ -403,7 +391,6 @@ contract UVCollectible is
      */
     function unlockToken(uint256 tokenId)
         external
-        virtual
         onlyOwnerOrAdmin
         whenNotPaused
     {
@@ -437,7 +424,6 @@ contract UVCollectible is
      */
     function renewSubscription(uint256 tokenId, uint64 duration)
         external
-        virtual
         onlyOwnerOrAdmin
     {
         _requireMinted(tokenId);
@@ -451,10 +437,7 @@ contract UVCollectible is
      * @param duration ( uint64 ) duration in seconds to renew the subscription for
      * Emits a {SubscriptionUpdate} event after the subscription is extended.
      */
-    function _extendSubscription(uint256 tokenId, uint64 duration)
-        internal
-        virtual
-    {
+    function _extendSubscription(uint256 tokenId, uint64 duration) internal {
         uint64 currentExpiration = _expirations[tokenId];
         uint64 newExpiration;
         if (currentExpiration == 0) {
@@ -471,11 +454,7 @@ contract UVCollectible is
     /**
      * @dev See {IERC5643-cancelSubscription}.
      */
-    function cancelSubscription(uint256 tokenId)
-        external
-        virtual
-        onlyOwnerOrAdmin
-    {
+    function cancelSubscription(uint256 tokenId) external onlyOwnerOrAdmin {
         delete _expirations[tokenId];
         emit SubscriptionUpdate(tokenId, 0);
     }
@@ -483,7 +462,7 @@ contract UVCollectible is
     /**
      * @dev See {IERC5643-expiresAt}.
      */
-    function expiresAt(uint256 tokenId) external view virtual returns (uint64) {
+    function expiresAt(uint256 tokenId) external view returns (uint64) {
         _requireMinted(tokenId);
         return _expirations[tokenId];
     }
@@ -517,7 +496,7 @@ contract UVCollectible is
      * Reclaim
      ************************************************************************************************/
     /**
-     * @dev Reclaim a token from a user to the owner's wallet
+     * @dev Reclaim a token from a user to the recipient's wallet
      * Requires:
      *  - msg sender to be the contract owner
      * @param tokenId ( uint256 ) Id of the token being reclaimed
@@ -543,18 +522,41 @@ contract UVCollectible is
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( address ) The address that will receive the minted tokens.
      * @param locked ( bool ) true if minted token should be locked, else false
-     * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
-     * @return A boolean that indicates if the operation was successful.
+     * @return lastId ( uint256 ) the tokenId of the minted token.
      */
     function mintToken(
         uint256 collectionId,
         address to,
-        bool locked,
-        uint64 validDuration
-    ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
+        bool locked
+    ) public whenNotPaused onlyOwnerOrAdmin returns (uint256) {
         // Updates Last Id first to not overlap
-        lastId += 1;
-        return _mintToken(collectionId, lastId, to, locked, validDuration);
+        ++lastId;
+        _mintToken(collectionId, lastId, to, locked);
+        return lastId;
+    }
+
+    /**
+     * @dev Mint token to address.
+     * Requires
+     * - The msg sender to be the onwer
+     * - The contract does not have to be paused
+     * @param collectionId ( uint256 ) CollectionId for the new token
+     * @param to ( address ) The address that will receive the minted tokens.
+     * @param locked ( bool ) true if minted token should be locked, else false
+     * @param expiration ( unit64 ) timestamp when the token expires
+     * @return lastId ( uint256 ) the tokenId of the minted token.
+     */
+    function mintTokenWithExpiration(
+        uint256 collectionId,
+        address to,
+        bool locked,
+        uint64 expiration
+    ) public whenNotPaused onlyOwnerOrAdmin returns (uint256) {
+        // Updates Last Id first to not overlap
+        ++lastId;
+        _mintToken(collectionId, lastId, to, locked);
+        setExpiration(lastId, expiration);
+        return lastId;
     }
 
     /**
@@ -565,32 +567,26 @@ contract UVCollectible is
      * @param collectionId ( uint256 ) CollectionId for the new token
      * @param to ( array of address ) The addresses that will receive the minted tokens.
      * @param locked ( bool ) true if minted token should be locked, else false
-     * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
-     * @return A boolean that indicates if the operation was successful.
+     * @param expiration ( unit64 ) timestamp when the token expires, 0 if not subscription token
+     * @return lastId ( uint256 ) the tokenId of the last minted token.
+     * @return lastId ( uint256 ) the number of tokens minted.
      */
     function mintCollectionToManyUsers(
         uint256 collectionId,
         address[] calldata to,
         bool locked,
-        uint64 validDuration
-    ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
+        uint64 expiration
+    ) public whenNotPaused onlyOwnerOrAdmin returns (uint256, uint256) {
         // First mint all tokens
-        if (validDuration > 0) {
-            uint256 tokenId;
-            uint64 newExpiration = uint64(block.timestamp) + validDuration;
-            for (uint256 i = 0; i < to.length; ++i) {
-                tokenId = lastId + 1 + i;
-                _mintTokenV2(collectionId, tokenId, to[i], locked);
-                setExpiration(tokenId, newExpiration);
-            }
-        } else {
-            for (uint256 i = 0; i < to.length; ++i) {
-                _mintTokenV2(collectionId, lastId + 1 + i, to[i], locked);
-            }
+        uint256 tokenId;
+        for (uint256 i = 0; i < to.length; ++i) {
+            tokenId = lastId + 1 + i;
+            _mintToken(collectionId, tokenId, to[i], locked);
+            setExpiration(tokenId, expiration);
         }
         // Last update Last Id
         lastId += to.length;
-        return true;
+        return (lastId, to.length);
     }
 
     /**
@@ -601,59 +597,26 @@ contract UVCollectible is
      * @param collectionIds ( array uint256 ) Collection Ids to assing to user
      * @param to ( address ) The address that will receive the minted tokens.
      * @param locked ( bool ) true if minted token should be locked, else false
-     * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
-     * @return A boolean that indicates if the operation was successful.
+     * @param expiration ( unit64 ) timestamp when the token expires, 0 if not subscription token
+     * @return lastId ( uint256 ) the tokenId of the last minted token.
+     * @return lastId ( uint256 ) the number of tokens minted.
      */
     function mintUserToManyCollections(
         uint256[] calldata collectionIds,
         address to,
         bool locked,
-        uint64 validDuration
-    ) public whenNotPaused onlyOwnerOrAdmin returns (bool) {
+        uint64 expiration
+    ) public whenNotPaused onlyOwnerOrAdmin returns (uint256, uint256) {
         // First mint all tokens
-        if (validDuration > 0) {
-            uint256 tokenId;
-            uint64 newExpiration = uint64(block.timestamp) + validDuration;
-            for (uint256 i = 0; i < collectionIds.length; ++i) {
-                tokenId = lastId + 1 + i;
-                _mintTokenV2(collectionIds[i], tokenId, to, locked);
-                setExpiration(tokenId, newExpiration);
-            }
-        } else {
-            for (uint256 i = 0; i < collectionIds.length; ++i) {
-                _mintTokenV2(collectionIds[i], lastId + 1 + i, to, locked);
-            }
+        uint256 tokenId;
+        for (uint256 i = 0; i < collectionIds.length; ++i) {
+            tokenId = lastId + 1 + i;
+            _mintToken(collectionIds[i], tokenId, to, locked);
+            setExpiration(tokenId, expiration);
         }
         // Last update Last Id
         lastId += collectionIds.length;
-        return true;
-    }
-
-    /**
-     * @dev Internal function to mint tokens
-     * @param collectionId ( uint256 ) CollectionId for the new token
-     * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
-     * @param to ( address ) The address that will receive the minted tokens.
-     * @param locked ( bool ) true if minted token should be locked, else false
-     * @param validDuration ( unit64 ) duration in seconds that the minted token is valid for, 0 if not subscription token
-     * @return A boolean that indicates if the operation was successful.
-     */
-    function _mintToken(
-        uint256 collectionId,
-        uint256 tokenId,
-        address to,
-        bool locked,
-        uint64 validDuration
-    ) internal returns (bool) {
-        _mint(to, tokenId);
-        _tokenCollection[tokenId] = collectionId;
-        if (locked) {
-            _lock(tokenId);
-        }
-        if (validDuration != 0) {
-            _extendSubscription(tokenId, validDuration);
-        }
-        return true;
+        return (lastId, collectionIds.length);
     }
 
     /**
@@ -662,20 +625,18 @@ contract UVCollectible is
      * @param tokenId ( uint256 ) The token id to mint. Minted by message.sender
      * @param to ( address ) The address that will receive the minted tokens.
      * @param locked ( bool ) true if minted token should be locked, else false
-     * @return A boolean that indicates if the operation was successful.
      */
-    function _mintTokenV2(
+    function _mintToken(
         uint256 collectionId,
         uint256 tokenId,
         address to,
         bool locked
-    ) internal returns (bool) {
+    ) internal {
         _mint(to, tokenId);
         _tokenCollection[tokenId] = collectionId;
         if (locked) {
             _lock(tokenId);
         }
-        return true;
     }
 
     /**
@@ -704,7 +665,6 @@ contract UVCollectible is
     function royaltyInfo(uint256 _tokenId, uint256 _salePrice)
         public
         view
-        virtual
         override
         returns (address, uint256)
     {
@@ -727,63 +687,9 @@ contract UVCollectible is
      * @param receiver Address to receive the royalties. Cannot be the zero address.
      * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
      */
-    function updateDefaultRoyalty(address receiver, uint96 feeNumerator)
+    function setDefaultRoyalty(address receiver, uint96 feeNumerator)
         public
         onlyOwnerOrAdmin
-    {
-        _setDefaultRoyalty(receiver, feeNumerator);
-    }
-
-    /**
-     * @dev Removes default royalty information.
-     */
-    function removeDefaultRoyalty() public onlyOwnerOrAdmin {
-        _deleteDefaultRoyalty();
-    }
-
-    /**
-     * @dev Sets the royalty information for a specific token id, overriding the global default.
-     * @param receiver Address to receive the royalties. Cannot be the zero address.
-     * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
-     */
-    function updateCollectionRoyalty(
-        uint256 collectionId,
-        address receiver,
-        uint96 feeNumerator
-    ) public onlyOwnerOrAdmin {
-        _setCollectionRoyalty(collectionId, receiver, feeNumerator);
-    }
-
-    /**
-     * @dev Resets royalty information for the token id back to the global default.
-     */
-    function removeCollectionRoyalty(uint256 collectionId)
-        public
-        onlyOwnerOrAdmin
-    {
-        _resetCollectionRoyalty(collectionId);
-    }
-
-    /**
-     * @dev The denominator with which to interpret the fee set in {_setTokenRoyalty} and {_setDefaultRoyalty} as a
-     * fraction of the sale price. Defaults to 10000 so fees are expressed in basis points, but may be customized by an
-     * override.
-     */
-    function _feeDenominator() internal pure virtual returns (uint96) {
-        return 10000;
-    }
-
-    /**
-     * @dev Sets the royalty information that all ids in this contract will default to.
-     *
-     * Requirements:
-     *
-     * - `receiver` cannot be the zero address.
-     * - `feeNumerator` cannot be greater than the fee denominator.
-     */
-    function _setDefaultRoyalty(address receiver, uint96 feeNumerator)
-        internal
-        virtual
     {
         require(
             feeNumerator <= _feeDenominator(),
@@ -795,25 +701,16 @@ contract UVCollectible is
     }
 
     /**
-     * @dev Removes default royalty information.
+     * @dev Sets the royalty information for a specific collection, overriding the global default.
+     * @param collectionId the collection to set the royalty for
+     * @param receiver Address to receive the royalties. Cannot be the zero address.
+     * @param feeNumerator Size of the royalty in basis points. Cannot be greater than the fee denominator (10000).
      */
-    function _deleteDefaultRoyalty() internal virtual {
-        delete _defaultRoyaltyInfo;
-    }
-
-    /**
-     * @dev Sets the royalty information for a specific token id, overriding the global default.
-     *
-     * Requirements:
-     *
-     * - `receiver` cannot be the zero address.
-     * - `feeNumerator` cannot be greater than the fee denominator.
-     */
-    function _setCollectionRoyalty(
+    function setCollectionRoyalty(
         uint256 collectionId,
         address receiver,
         uint96 feeNumerator
-    ) internal virtual {
+    ) public onlyOwnerOrAdmin {
         require(
             feeNumerator <= _feeDenominator(),
             "ERC2981: royalty fee will exceed salePrice"
@@ -827,9 +724,28 @@ contract UVCollectible is
     }
 
     /**
+     * @dev The denominator with which to interpret the fee set in {_setTokenRoyalty} and {_setDefaultRoyalty} as a
+     * fraction of the sale price. Defaults to 10000 so fees are expressed in basis points, but may be customized by an
+     * override.
+     */
+    function _feeDenominator() internal pure returns (uint96) {
+        return 10000;
+    }
+
+    /**
+     * @dev Removes default royalty information.
+     */
+    function removeDefaultRoyalty() external onlyOwnerOrAdmin {
+        delete _defaultRoyaltyInfo;
+    }
+
+    /**
      * @dev Resets royalty information for the token id back to the global default.
      */
-    function _resetCollectionRoyalty(uint256 collectionId) internal virtual {
+    function removeCollectionRoyalty(uint256 collectionId)
+        external
+        onlyOwnerOrAdmin
+    {
         delete _collectionRoyaltyInfo[collectionId];
     }
 
@@ -839,7 +755,7 @@ contract UVCollectible is
     /**
      * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
      */
-    function _burn(uint256 tokenId) internal virtual override {
+    function _burn(uint256 tokenId) internal override {
         super._burn(tokenId);
         delete _tokenCollection[tokenId];
         delete _tokenLocked[tokenId];
@@ -935,7 +851,7 @@ contract UVCollectible is
      * @dev Allows the owner to update the trusted forwarder for erc2771 transactions
      * @param forwarder ( address ) contract address of the new forwarder
      */
-    function setTurstedForwarder(address forwarder) public onlyOwnerOrAdmin {
+    function setTrustedForwarder(address forwarder) public onlyOwnerOrAdmin {
         _setTrustedForwarder(forwarder);
     }
 }
