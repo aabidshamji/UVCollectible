@@ -48,3 +48,6 @@ contract BaseSetup is Test {
         );
     }
 }
+
+// forge test -vvvv
+// forge test --gas-report
