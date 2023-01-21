@@ -117,4 +117,13 @@ contract PauseTest is BaseSetup {
         vm.stopPrank();
         assertEq(proxied.ownerOf(newTokenId), user);
     }
+
+    // cannot reclaim when paused
+    function testReclaim() public {
+        uint256 newTokenId = proxied.mintToken(0, user, true);
+        proxied.pause();
+        vm.expectRevert("Pausable: paused");
+        proxied.transferLockedToken(newTokenId, user1, false);
+        assertEq(proxied.ownerOf(newTokenId), user);
+    }
 }
