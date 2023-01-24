@@ -575,7 +575,7 @@ contract UVCollectible is
      * @param locked ( bool ) true if minted token should be locked, else false
      * @param expiration ( unit64 ) timestamp when the token expires, 0 if not subscription token
      * @return lastId ( uint256 ) the tokenId of the last minted token.
-     * @return lastId ( uint256 ) the number of tokens minted.
+     * @return to.length ( uint256 ) the number of tokens minted.
      */
     function mintCollectionToManyUsers(
         uint256 collectionId,
@@ -605,7 +605,7 @@ contract UVCollectible is
      * @param locked ( bool ) true if minted token should be locked, else false
      * @param expiration ( unit64 ) timestamp when the token expires, 0 if not subscription token
      * @return lastId ( uint256 ) the tokenId of the last minted token.
-     * @return lastId ( uint256 ) the number of tokens minted.
+     * @return collectionIds.length ( uint256 ) the number of tokens minted.
      */
     function mintUserToManyCollections(
         uint256[] calldata collectionIds,
@@ -759,7 +759,8 @@ contract UVCollectible is
      * Burn
      ************************************************************************************************/
     /**
-     * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
+     * @dev Admin function that allows burning of locked tokens by admin or owner.
+     * @param tokenId the id of the token that should be burnt
      */
     function burnLocked(uint256 tokenId)
         external
@@ -770,6 +771,9 @@ contract UVCollectible is
         _burn(tokenId);
     }
 
+    /**
+     * @dev See {ERC721-_burn}. This override additionally clears the royalty information for the token.
+     */
     function _burn(uint256 tokenId) internal override whenNotLocked(tokenId) {
         super._burn(tokenId);
         delete _tokenCollection[tokenId];
