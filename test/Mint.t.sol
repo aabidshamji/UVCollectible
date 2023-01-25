@@ -87,7 +87,13 @@ contract MintTest is BaseSetup {
             newExpiration
         );
         assertEq(newTokenId, returnedTokenId);
-        perTokenMintTest(newTokenId, user, collectionId, newLocked, 0);
+        perTokenMintTest(
+            newTokenId,
+            user,
+            collectionId,
+            newLocked,
+            newExpiration
+        );
     }
 
     // users cannot mint
@@ -98,5 +104,123 @@ contract MintTest is BaseSetup {
         vm.expectRevert("caller is not owner or admin");
         proxied.mintToken(collectionId, user, newLocked);
         vm.stopPrank();
+    }
+
+    // mint to many users
+    function testMintToManyUsers() public {
+        uint256 collectionId = 5;
+        address[] memory to = new address[](3);
+        to[0] = user;
+        to[1] = user1;
+        to[2] = user2;
+        uint256 newLast;
+        uint256 numMinted;
+        uint64 expiration = 274729;
+
+        // unlocked + sub
+        (newLast, numMinted) = proxied.mintCollectionToManyUsers(
+            collectionId,
+            to,
+            false,
+            expiration
+        );
+        assertEq(newLast, 3);
+        assertEq(numMinted, 3);
+        for (uint256 i = 0; i < to.length; i++) {
+            perTokenMintTest(i + 1, to[i], collectionId, false, expiration);
+        }
+
+        // locked = no sub
+        (newLast, numMinted) = proxied.mintCollectionToManyUsers(
+            collectionId,
+            to,
+            true,
+            0
+        );
+        assertEq(newLast, 3 + 3);
+        assertEq(numMinted, 3);
+        for (uint256 i = 0; i < to.length; i++) {
+            perTokenMintTest(i + 1 + 3, to[i], collectionId, true, 0);
+        }
+    }
+
+    // user cannot mint to many
+    function testMintToManyUsersAsUser() public {
+        uint256 collectionId = 5;
+        address[] memory to = new address[](3);
+        to[0] = user;
+        to[1] = user1;
+        to[2] = user2;
+        uint256 newLast;
+        uint256 numMinted;
+        uint64 expiration = 274729;
+
+        vm.startPrank(user);
+        vm.expectRevert("caller is not owner or admin");
+        (newLast, numMinted) = proxied.mintCollectionToManyUsers(
+            collectionId,
+            to,
+            false,
+            expiration
+        );
+    }
+
+    // mint user to many collections
+    function testMintUserToManyCollections() public {
+        uint256[] memory collectionIds = new uint256[](3);
+        collectionIds[0] = 1;
+        collectionIds[1] = 2;
+        collectionIds[2] = 3;
+        uint256 newLast;
+        uint256 numMinted;
+        uint64 expiration = 274729;
+
+        // unlocked + sub
+        (newLast, numMinted) = proxied.mintUserToManyCollections(
+            collectionIds,
+            user,
+            false,
+            expiration
+        );
+        assertEq(newLast, 3);
+        assertEq(numMinted, 3);
+        assertEq(proxied.balanceOf(user), 3);
+        for (uint256 i = 0; i < collectionIds.length; i++) {
+            perTokenMintTest(i + 1, user, collectionIds[i], false, expiration);
+        }
+
+        // locked = no sub
+        (newLast, numMinted) = proxied.mintUserToManyCollections(
+            collectionIds,
+            user,
+            true,
+            0
+        );
+        assertEq(newLast, 3 + 3);
+        assertEq(numMinted, 3);
+        assertEq(proxied.balanceOf(user), 3 + 3);
+        for (uint256 i = 0; i < collectionIds.length; i++) {
+            perTokenMintTest(i + 1 + 3, user, collectionIds[i], true, 0);
+        }
+    }
+
+    // user cannot mint
+    function testMintUserToManyCollectionsAsUser() public {
+        uint256[] memory collectionIds = new uint256[](3);
+        collectionIds[0] = 1;
+        collectionIds[1] = 2;
+        collectionIds[2] = 3;
+        uint256 newLast;
+        uint256 numMinted;
+        uint64 expiration = 274729;
+
+        vm.startPrank(user);
+        vm.expectRevert("caller is not owner or admin");
+        (newLast, numMinted) = proxied.mintUserToManyCollections(
+            collectionIds,
+            user,
+            false,
+            expiration
+        );
     }
 }
