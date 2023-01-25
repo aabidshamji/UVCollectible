@@ -38,6 +38,7 @@ contract MintTest is BaseSetup {
         string memory correctURI = string(
             abi.encodePacked(
                 contractURI,
+                "/",
                 StringsUpgradeable.toString(expCollectionId),
                 "/",
                 StringsUpgradeable.toString(tokenId)

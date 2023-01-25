@@ -232,6 +232,7 @@ contract UVCollectible is
             string(
                 abi.encodePacked(
                     contractURI,
+                    "/",
                     StringsUpgradeable.toString(collectionId),
                     "/",
                     StringsUpgradeable.toString(tokenId)
@@ -253,6 +254,7 @@ contract UVCollectible is
             string(
                 abi.encodePacked(
                     contractURI,
+                    "/",
                     StringsUpgradeable.toString(collectionId)
                 )
             );
