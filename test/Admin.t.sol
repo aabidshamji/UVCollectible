@@ -7,31 +7,51 @@ import "../src/UVCollectible.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
 contract AdminTest is BaseSetup {
-    function testName() public {
-        assertEq(proxied.name(), "UVCollectible");
+    // check admins
+    function testCheckAdmin() public {
+        // admin
+        assert(proxied.isAdmin(uvadmin));
+
+        // owner is not admin
+        assertFalse(proxied.isAdmin(owner));
+
+        // user is not admin
+        assertFalse(proxied.isAdmin(user));
+    }
+
+    // add and remove admin as owner
+    function testUpdateAdminAsOwner() public {
+        address newAdmin = cheats.addr(5);
+        assertFalse(proxied.isAdmin(newAdmin));
+        proxied.addAdmin(newAdmin);
+        assert(proxied.isAdmin(newAdmin));
+        proxied.removeAdmin(newAdmin);
+        assertFalse(proxied.isAdmin(newAdmin));
+    }
+
+    // add and remove admin as admin
+    function testUpdateAdminAsAdmin() public {
+        address newAdmin = cheats.addr(5);
+        assertFalse(proxied.isAdmin(newAdmin));
         vm.startPrank(uvadmin);
-        proxied.updateName("UVCollectibleNew");
-        assertEq(proxied.name(), "UVCollectibleNew");
+        proxied.addAdmin(newAdmin);
+        assert(proxied.isAdmin(newAdmin));
+        proxied.removeAdmin(newAdmin);
         vm.stopPrank();
+        assertFalse(proxied.isAdmin(newAdmin));
     }
 
-    function testFailName() public {
+    // add and remove admin as admin
+    function testUpdateAdminAsUser() public {
+        address newAdmin = cheats.addr(5);
+        assertFalse(proxied.isAdmin(newAdmin));
         vm.startPrank(user);
-        proxied.updateName("UVCollectibleNew");
+        vm.expectRevert("caller is not owner or admin");
+        proxied.addAdmin(newAdmin);
+        assertFalse(proxied.isAdmin(newAdmin));
+        vm.expectRevert("caller is not owner or admin");
+        proxied.removeAdmin(uvadmin);
         vm.stopPrank();
-    }
-
-    function testSymbol() public {
-        assertEq(proxied.symbol(), "UVC");
-        vm.startPrank(uvadmin);
-        proxied.updateSymbol("nUVC");
-        assertEq(proxied.symbol(), "nUVC");
-        vm.stopPrank();
-    }
-
-    function testFailSymbol() public {
-        vm.startPrank(user);
-        proxied.updateSymbol("UVC");
-        vm.stopPrank();
+        assert(proxied.isAdmin(uvadmin));
     }
 }
