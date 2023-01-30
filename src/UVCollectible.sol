@@ -458,7 +458,13 @@ contract UVCollectible is
     /**
      * @dev See {IERC5643-cancelSubscription}.
      */
-    function cancelSubscription(uint256 tokenId) external onlyOwnerOrAdmin {
+    function cancelSubscription(uint256 tokenId) external {
+        require(
+            _isApprovedOrOwner(_msgSender(), tokenId) ||
+                owner() == _msgSender() ||
+                isAdmin(_msgSender()),
+            "Caller is not owner nor approved"
+        );
         delete _expirations[tokenId];
         emit SubscriptionUpdate(tokenId, 0);
     }
