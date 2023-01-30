@@ -54,4 +54,20 @@ contract AdminTest is BaseSetup {
         vm.stopPrank();
         assert(proxied.isAdmin(uvadmin));
     }
+
+    // transfers
+    function testTransfer() public {
+        uint256 newTokenId = proxied.mintToken(10, user1, false);
+        vm.prank(user1);
+        proxied.transferFrom(user1, user2, newTokenId);
+        assertEq(proxied.ownerOf(newTokenId), user2);
+    }
+
+    // supports interface
+    function testSupportsInterface() public view {
+        // ERC-5643: Subscription NFTs
+        assert(proxied.supportsInterface(0x8c65f84d));
+        // ERC-2981: NFT Royalty Standard
+        assert(proxied.supportsInterface(0x2a55205a));
+    }
 }
