@@ -6,4 +6,11 @@ import "./BaseSetup.sol";
 import "../src/UVCollectible.sol";
 import "@openzeppelin/contracts-upgradeable/utils/StringsUpgradeable.sol";
 
-contract SubscriptionTest is BaseSetup {}
+contract SubscriptionTest is BaseSetup {
+    // mints as subscription
+    // update expiration
+    // admin/owner can cancel subscription
+    // isRenewable always true
+    // expiration can only be set for minted tokens
+    // admin or owner can renew subscription
+}

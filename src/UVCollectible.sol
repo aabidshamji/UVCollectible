@@ -723,7 +723,7 @@ contract UVCollectible is
             feeNumerator <= _feeDenominator(),
             "ERC2981: royalty fee will exceed salePrice"
         );
-        require(receiver != address(0), "ERC2981: Invalid parameters");
+        require(receiver != address(0), "ERC2981: invalid receiver");
 
         _collectionRoyaltyInfo[collectionId] = RoyaltyInfo(
             receiver,
