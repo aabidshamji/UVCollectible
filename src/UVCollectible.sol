@@ -53,8 +53,8 @@ contract UVCollectible is
     // Token symbol
     string private _symbol;
 
-    // Token version
-    uint256 public version;
+    // Contract version
+    uint256 public constant VERSION = 0;
 
     // Stores the base contractURI
     string public contractURI;
@@ -105,7 +105,6 @@ contract UVCollectible is
 
         _name = __name;
         _symbol = __symbol;
-        version = 0;
         contractURI = __contractURI;
         addAdmin(__admin);
     }
