@@ -78,9 +78,29 @@ contract SubscriptionTest is BaseSetup {
         assertEq(proxied.expiresAt(newTokenId), 0);
     }
 
-    // isRenewable always true
-    function testIsRenewable() public view {
-        assert(proxied.isRenewable(0));
+    // isRenewable reverts on invalid token
+    function testIsRenewableInvalid() public {
+        bool renewable;
+        vm.expectRevert("ERC721: invalid token ID");
+        renewable = proxied.isRenewable(1);
+    }
+
+    // isRenewable true on tokens that have an expiration
+    function testIsRenewableTrue() public {
+        uint64 expiresAt = 10000;
+        uint256 newTokenId = proxied.mintTokenWithExpiration(
+            10,
+            user,
+            false,
+            expiresAt
+        );
+        assert(proxied.isRenewable(newTokenId));
+    }
+
+    // isRenewable false on tokens without an expiration
+    function testIsRenewableFalse() public {
+        uint256 newTokenId = proxied.mintToken(10, user, false);
+        assertFalse(proxied.isRenewable(newTokenId));
     }
 
     // expiration can only be set for minted tokens

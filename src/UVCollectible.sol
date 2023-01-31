@@ -472,7 +472,7 @@ contract UVCollectible is
     /**
      * @dev See {IERC5643-expiresAt}.
      */
-    function expiresAt(uint256 tokenId) external view returns (uint64) {
+    function expiresAt(uint256 tokenId) public view returns (uint64) {
         _requireMinted(tokenId);
         return _expirations[tokenId];
     }
@@ -480,10 +480,8 @@ contract UVCollectible is
     /**
      * @dev See {IERC5643-isRenewable}.
      */
-    function isRenewable(
-        uint256 /*tokenId*/
-    ) external pure returns (bool) {
-        return true;
+    function isRenewable(uint256 tokenId) external view returns (bool) {
+        return expiresAt(tokenId) != 0;
     }
 
     /**
