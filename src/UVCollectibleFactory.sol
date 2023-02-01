@@ -25,7 +25,7 @@ contract UVCollectibleFactory is Ownable {
         address __admin,
         uint256 collectibleId,
         address collectibleOwner
-    ) public onlyOwner {
+    ) public onlyOwner returns (address) {
         require(
             collectibles[collectibleId] == address(0),
             "UVCollectibleFactory: invalid collectibleId"
@@ -47,6 +47,8 @@ contract UVCollectibleFactory is Ownable {
         UVCollectible(address(newCollectibleProxy)).transferOwnership(
             collectibleOwner
         );
+
+        return address(newCollectibleProxy);
     }
 
     function getCollectibleAddress(uint256 collectibleId)

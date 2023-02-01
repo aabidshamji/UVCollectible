@@ -47,7 +47,7 @@ contract BaseSetup is Test {
 
         // (3) Build a collectible contract
         uint256 collectibleId = 5604561456413487;
-        factory.buildCollectible(
+        proxyAddress = factory.buildCollectible(
             "UVCollectible",
             "UVC",
             "token.ultraviolet.club",
@@ -58,7 +58,6 @@ contract BaseSetup is Test {
 
         // (4) To be able to call functions from the logic contract, we need to
         //     cast the proxy to the right type
-        proxyAddress = factory.getCollectibleAddress(collectibleId);
         proxied = UVCollectible(proxyAddress);
     }
 }
