@@ -12,7 +12,6 @@ contract UVCollectibleBeacon is Ownable {
     constructor(address _initBlueprint) {
         beacon = new UpgradeableBeacon(_initBlueprint);
         blueprint = _initBlueprint;
-        transferOwnership(tx.origin);
     }
 
     function update(address _newBlueprint) public onlyOwner {

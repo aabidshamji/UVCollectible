@@ -12,10 +12,10 @@ contract UVCollectibleFactory is Ownable {
     uint256 public constant VERSION = 0;
 
     mapping(uint256 => address) private collectibles;
-    UVCollectibleBeacon immutable beacon;
+    address immutable beacon;
 
-    constructor(address _initBlueprint) {
-        beacon = new UVCollectibleBeacon(_initBlueprint);
+    constructor(address _beacon) {
+        beacon = _beacon;
     }
 
     function buildCollectible(
@@ -25,7 +25,12 @@ contract UVCollectibleFactory is Ownable {
         address __admin,
         uint256 collectibleId,
         address collectibleOwner
-    ) public {
+    ) public onlyOwner {
+        require(
+            collectibles[collectibleId] == address(0),
+            "UVCollectibleFactory: invalid collectibleId"
+        );
+
         BeaconProxy newCollectibleProxy = new BeaconProxy(
             address(beacon),
             abi.encodeWithSelector(
@@ -57,6 +62,6 @@ contract UVCollectibleFactory is Ownable {
     }
 
     function getImplementation() public view returns (address) {
-        return beacon.implementation();
+        return UVCollectibleBeacon(beacon).implementation();
     }
 }

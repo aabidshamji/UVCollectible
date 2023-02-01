@@ -4,6 +4,7 @@ pragma solidity ^0.8.13;
 import "forge-std/Test.sol";
 import "../src/UVCollectible.sol";
 import "../src/UVCollectibleFactory.sol";
+import "../src/UVCollectibleBeacon.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 interface CheatCodes {
@@ -12,8 +13,10 @@ interface CheatCodes {
 }
 
 contract BaseSetup is Test {
-    UVCollectibleFactory public factory;
     UVCollectible public logic;
+    UVCollectibleBeacon public beacon;
+    UVCollectibleFactory public factory;
+
     address public proxyAddress;
     UVCollectible public proxied;
 
@@ -37,11 +40,13 @@ contract BaseSetup is Test {
         // (1) Create logic contract
         logic = new UVCollectible();
 
+        beacon = new UVCollectibleBeacon(address(logic));
+
         // (2) Create Factory
-        factory = new UVCollectibleFactory(address(logic));
+        factory = new UVCollectibleFactory(address(beacon));
 
         // (3) Build a collectible contract
-        uint256 collectibleId = 1;
+        uint256 collectibleId = 5604561456413487;
         factory.buildCollectible(
             "UVCollectible",
             "UVC",
