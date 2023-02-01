@@ -4,6 +4,7 @@ pragma solidity ^0.8.12;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/ERC721Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC721/extensions/ERC721BurnableUpgradeable.sol";
@@ -14,12 +15,13 @@ import "./operator-filter-registry/DefaultOperatorFiltererUpgradeable.sol";
 import "./IERC5643.sol";
 
 /// @custom:security-contact security@ultraviolet.club
-contract UVCollectible is
+contract UVCollectibleV2 is
     Initializable,
     IERC2981Upgradeable,
     ERC721BurnableUpgradeable,
     PausableUpgradeable,
     OwnableUpgradeable,
+    UUPSUpgradeable,
     IERC5643,
     ERC2771Recipient,
     DefaultOperatorFiltererUpgradeable
@@ -52,7 +54,7 @@ contract UVCollectible is
     string private _symbol;
 
     // Contract version
-    uint256 public constant VERSION = 0;
+    uint256 public constant VERSION = 2;
 
     // Stores the base contractURI
     string public contractURI;
@@ -98,6 +100,7 @@ contract UVCollectible is
         __Pausable_init();
         __Ownable_init();
         __ERC721Burnable_init();
+        __UUPSUpgradeable_init();
         __DefaultOperatorFilterer_init();
 
         _name = __name;
@@ -167,6 +170,16 @@ contract UVCollectible is
         delete _admins[admin];
         emit AdminUpdated(admin, false);
     }
+
+    /************************************************************************************************
+     * Upgradability
+     ************************************************************************************************/
+    /// UUPS module required by openZ — Stops unauthorized upgrades
+    function _authorizeUpgrade(address newImplementation)
+        internal
+        override
+        onlyOwnerOrAdmin
+    {}
 
     /************************************************************************************************
      * Metadata

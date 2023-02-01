@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "forge-std/Test.sol";
 import "../src/UVCollectible.sol";
+import "../src/UVCollectibleFactory.sol";
 import "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 
 interface CheatCodes {
@@ -11,8 +12,9 @@ interface CheatCodes {
 }
 
 contract BaseSetup is Test {
+    UVCollectibleFactory public factory;
     UVCollectible public logic;
-    ERC1967Proxy public proxy;
+    address public proxyAddress;
     UVCollectible public proxied;
 
     address public owner;
@@ -31,21 +33,28 @@ contract BaseSetup is Test {
         user = cheats.addr(2);
         user1 = cheats.addr(3);
         user2 = cheats.addr(4);
+
         // (1) Create logic contract
         logic = new UVCollectible();
 
-        // (2) Create proxy and tell it which logic contract to use
-        proxy = new ERC1967Proxy(address(logic), "");
+        // (2) Create Factory
+        factory = new UVCollectibleFactory(address(logic));
 
-        // (3) To be able to call functions from the logic contract, we need to
-        //     cast the proxy to the right type
-        proxied = UVCollectible(address(proxy));
-        proxied.initialize(
+        // (3) Build a collectible contract
+        uint256 collectibleId = 1;
+        factory.buildCollectible(
             "UVCollectible",
             "UVC",
             "token.ultraviolet.club",
-            address(uvadmin)
+            address(uvadmin),
+            collectibleId,
+            owner
         );
+
+        // (4) To be able to call functions from the logic contract, we need to
+        //     cast the proxy to the right type
+        proxyAddress = factory.getCollectibleAddress(collectibleId);
+        proxied = UVCollectible(proxyAddress);
     }
 }
 
