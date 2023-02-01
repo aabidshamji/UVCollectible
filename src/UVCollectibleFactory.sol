@@ -57,11 +57,11 @@ contract UVCollectibleFactory is Ownable {
         return collectibles[collectibleId];
     }
 
-    function getBeacon() public view returns (address) {
+    function getBeacon() external view returns (address) {
         return address(beacon);
     }
 
-    function getImplementation() public view returns (address) {
+    function getImplementation() external view returns (address) {
         return UVCollectibleBeacon(beacon).implementation();
     }
 }
